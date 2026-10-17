@@ -12,7 +12,7 @@ DFsolution의 브랜드 레퍼런스 홈페이지. 제안 표기: DF · Digital 
 
 - 럭셔리 에디토리얼 방향의 디지털 프로덕트 스튜디오.
 - DESIGN_VARIANCE 7 / MOTION_INTENSITY 5 / VISUAL_DENSITY 3.
-- Forest 팔레트: 연한 그린 페이퍼 + 딥 그린. 시스템/수동 라이트·다크 테마.
+- Black & Ivory 팔레트: 따뜻한 아이보리 + 잉크 블랙. 시스템/수동 라이트·다크 테마.
 - Georgia의 세리프와 한국어 시스템 산세리프. 직각 이미지, 얇은 구분선, 비대칭 서비스 배치.
 - 진입 모션은 정보 순서를 드러내고, 호버는 클릭 가능성을 알립니다. reduced-motion 지원.
 - 레이어: 콘텐츠 기본, skip link 3, 모달은 브라우저 top layer.
