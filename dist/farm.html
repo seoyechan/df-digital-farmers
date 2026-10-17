@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DF 농장 · 디지털 파머 농사하기</title>
+<meta name="description" content="밭에서 당근을 뽑으면 Digital Farmers가 키운 서비스를 만날 수 있어요.">
+<meta name="theme-color" content="#bfe6f2"><link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#fffbea;--brown:#6b4f2a;--line:#e8dcb8;--leaf:#5fae4e;--carrot:#ff8a2a;--sky:#bfe6f2}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--sky);font-family:Jua,-apple-system,'Apple SD Gothic Neo',sans-serif;color:var(--brown);-webkit-tap-highlight-color:transparent;user-select:none}
+canvas{display:block;width:100vw;height:100vh;height:100dvh;touch-action:none;opacity:0;transition:opacity 1s}
+canvas.ready{opacity:1}
+a{color:inherit;text-decoration:none}button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid var(--carrot);outline-offset:3px}
+.hud{position:fixed;inset:max(14px,env(safe-area-inset-top)) 16px auto;display:flex;gap:8px;align-items:center;pointer-events:none}
+.pill{pointer-events:auto;background:var(--cream);border-radius:999px;padding:9px 16px;font-size:16px;box-shadow:0 3px 0 var(--line),0 8px 20px #0001;white-space:nowrap}
+.title{margin-right:auto}
+.count b{color:var(--carrot);font-weight:400}
+.hint{position:fixed;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);margin:0;font-size:14px;background:#fffbeacc;padding:7px 14px;border-radius:999px;white-space:nowrap}
+.prompt{position:fixed;left:50%;bottom:64px;transform:translateX(-50%);animation:bob 1.2s ease-in-out infinite}
+.prompt[hidden]{display:none}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--carrot);color:#fff;font-size:19px;padding:13px 24px;border-radius:999px;box-shadow:0 4px 0 #c9621a,0 10px 24px #0002;transition:transform .12s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #c9621a}
+.btn.ghost{background:var(--cream);color:var(--brown);box-shadow:0 4px 0 var(--line)}
+kbd{font:inherit;font-size:13px;background:#fff3;border-radius:6px;padding:2px 7px}
+@keyframes bob{50%{transform:translate(-50%,-6px)}}
+dialog{border:0;padding:0;background:transparent;max-width:min(440px,calc(100vw - 32px));overflow:visible;color:var(--brown)}
+dialog::backdrop{background:#3a5a2a55;backdrop-filter:blur(2px)}
+dialog[open]{animation:pop .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{transform:scale(.6) translateY(30px);opacity:0}}
+.bubble{position:relative;background:var(--cream);border-radius:34px;padding:34px 26px 24px;box-shadow:0 6px 0 var(--line),0 24px 60px #0003}
+.tag{position:absolute;top:-16px;left:22px;background:#ffd45c;padding:6px 16px;border-radius:999px;transform:rotate(-4deg);font-size:16px;box-shadow:0 3px 0 #e2b330}
+.bubble h2{margin:0 0 10px;font-weight:400;font-size:26px;line-height:1.3;color:#4a361c}
+.bubble p{margin:0 0 12px;font-size:16px;line-height:1.6;font-family:-apple-system,'Apple SD Gothic Neo',sans-serif;word-break:keep-all}
+.bubble ul{margin:0 0 14px;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.bubble li{background:#f3ead0;border-radius:999px;padding:6px 12px;font-size:14px}
+.bubble .note{font-size:13px;opacity:.75}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.art{margin:-10px -6px 14px;height:190px;border-radius:24px;background:#f6ecd2 center/contain no-repeat}
+.art.seed{display:grid;place-items:center;font-size:84px;background:radial-gradient(#fff2b8,#f6ecd2)}
+.keys{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:15px;margin:4px 0 16px}
+.keys kbd{background:#f3ead0;text-align:center}
+@media(max-width:560px){.title{display:none}.hud{justify-content:space-between}.pill{font-size:14px;padding:8px 13px}.hint{font-size:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.touch{display:none}@media(pointer:coarse){.pc,#pull kbd{display:none}.touch{display:inline}}
+.fallback{position:fixed;inset:0;display:grid;place-items:center;padding:24px;text-align:center}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+</head>
+<body>
+<canvas id="scene" aria-label="디지털 파머 농장. 캐릭터를 움직여 당근을 뽑으면 서비스 소개가 나옵니다."></canvas>
+<header class="hud">
+  <a class="pill" href="./">← 홈</a>
+  <span class="pill title">DF 농장 · 디지털 파머 농사하기</span>
+  <span class="pill count" aria-live="polite">🥕 수확 <b id="count">0</b>/3</span>
+  <button class="pill" id="mute" aria-pressed="false">🔊</button>
+</header>
+<div class="prompt" id="prompt" hidden><button class="btn" id="pull">🥕 당근 뽑기 <kbd>Space</kbd></button></div>
+<p class="hint"><span class="pc">이동 <b>WASD·방향키</b> 또는 <b>클릭</b> · 뽑기 <b>Space</b></span><span class="touch">당근이나 땅을 톡 눌러 이동해요</span></p>
+
+<dialog id="intro"><div class="bubble">
+  <span class="tag">디지털 파머</span>
+  <h2>어서 와요,<br>DF 농장에!</h2>
+  <p>이 밭에는 우리가 정성껏 키운 서비스가 자라고 있어요. 당근을 쑥 뽑아서 무엇이 자랐는지 확인해 보세요.</p>
+  <div class="keys"><kbd>WASD</kbd><span>걷기 (방향키도 돼요)</span><kbd>터치</kbd><span>누른 곳으로 걸어가기</span><kbd>Space</kbd><span>가까운 당근 뽑기</span></div>
+  <div class="actions"><button class="btn" id="start">밭으로 나가기</button><a class="btn ghost" href="./#services">목록으로 보기</a></div>
+</div></dialog>
+<dialog id="card"><div class="bubble" id="card-body"></div></dialog>
+
+<script type="module">
+import * as THREE from 'three';
+const $ = s => document.querySelector(s);
+
+const SERVICES = [
+  {sign:'월급루팡', name:'월급루팡', obj:'월급루팡을', tag:'시간에 작은 재미를', img:'assets/loopang.png', color:0xff8a2a,
+   title:'잠깐 쉬어도,<br>월급은 흐르니까.', desc:'쉬는 동안 쌓이는 월급을 눈으로 확인하는 작은 즐거움. 바쁜 하루에 숨 돌릴 틈을 더해요.',
+   points:['쉬는 동안 흐르는 월급 확인','하루에 작은 재미 한 스푼'], cta:['월급루팡 시작하기 ↗','https://loopang.cloud/']},
+  {sign:'ondo°', name:'ondo', obj:'ondo를', tag:'날씨를 일상의 언어로', img:'assets/ondo.png', color:0xff8a2a,
+   title:'오늘의 날씨를,<br>한눈에 입다.', desc:'기온, 비, 바람에 맞춰 달라지는 캐릭터와 옷차림으로 오늘의 외출을 준비해 보세요.',
+   points:['캐릭터로 보는 날씨','날씨에 맞춘 옷 추천','코디 보관 옷장'], note:'공개 서비스 링크를 준비 중이에요.', cta:['ondo 문의하기 ↗','mailto:digfarmcom@gmail.com?subject=ondo%20%EC%84%9C%EB%B9%84%EC%8A%A4%20%EB%AC%B8%EC%9D%98']},
+  {sign:'???', name:'황금 당근', obj:'황금 당근을', tag:'아직 자라는 중', img:null, color:0xffc83d,
+   title:'다음 씨앗을<br>함께 심어요.', desc:'디지털 파머의 밭에는 아직 자라고 있는 아이디어가 많아요. 함께 키우고 싶은 생각이 있다면 들려주세요.',
+   points:[], cta:['digfarmcom@gmail.com ↗','mailto:digfarmcom@gmail.com']},
+];
+
+// ---------- renderer ----------
+const canvas = $('#scene');
+let renderer;
+try { renderer = new THREE.WebGLRenderer({canvas, antialias:true}); }
+catch { document.body.innerHTML = '<div class="fallback"><div class="bubble"><h2>이 브라우저에서는 농장을 열 수 없어요</h2><p>WebGL을 지원하는 브라우저에서 다시 열어 주세요.</p><a class="btn" href="./#services">서비스 목록 보기</a></div></div>'; throw 0; }
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const SKY = 0xbfe6f2;
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(SKY);
+scene.fog = new THREE.Fog(SKY, 24, 46);
+const camera = new THREE.PerspectiveCamera(34, 1, .1, 120);
+
+scene.add(new THREE.HemisphereLight(0xfff6e0, 0x6c8f4a, 1.6));
+const sun = new THREE.DirectionalLight(0xfff1d6, 2.2);
+sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -.0005;
+Object.assign(sun.shadow.camera, {left:-18, right:18, top:18, bottom:-18, near:1, far:60});
+scene.add(sun, sun.target);
+
+// Toon shading + "rolling log" world bend (the Animal Crossing horizon), done in view space.
+// ponytail: raycasts use the unbent world, so taps far from the player land slightly off; fine at this bend strength.
+const grad = new THREE.DataTexture(new Uint8Array([110, 185, 255]), 3, 1, THREE.RedFormat);
+grad.minFilter = grad.magFilter = THREE.NearestFilter; grad.needsUpdate = true;
+const bend = sh => { sh.vertexShader = sh.vertexShader.replace('#include <project_vertex>',
+  '#include <project_vertex>\n float bz = mvPosition.z + 16.0; mvPosition.y -= bz * bz * 0.0055; gl_Position = projectionMatrix * mvPosition;'); };
+const mats = {};
+const mat = (color, extra) => {
+  const key = color + (extra ? JSON.stringify(Object.keys(extra)) + Math.random() : '');
+  if (mats[key]) return mats[key];
+  const m = new THREE.MeshToonMaterial({color, gradientMap:grad, ...extra});
+  m.onBeforeCompile = bend;
+  return mats[key] = m;
+};
+const add = (parent, geo, color, [x=0, y=0, z=0] = [], scale) => {
+  const m = new THREE.Mesh(geo, typeof color === 'number' ? mat(color) : color);
+  m.position.set(x, y, z); if (scale) m.scale.set(...scale);
+  m.castShadow = m.receiveShadow = true; parent.add(m); return m;
+};
+const sphere = (r, w=16, h=12) => new THREE.SphereGeometry(r, w, h);
+const rand = (a, b) => a + Math.random() * (b - a);
+
+// ---------- world ----------
+const ground = add(scene, new THREE.CircleGeometry(70, 64), 0x9bd36a);
+ground.rotation.x = -Math.PI / 2; ground.castShadow = false;
+
+const colliders = []; // {x,z,r}
+const PLOTS = [[-4.2, -2], [0, -2.6], [4.2, -2]];
+const nearPlotOrPath = (x, z) => PLOTS.some(([px, pz]) => Math.hypot(x - px, z - pz) < 2.2) || (Math.abs(x) < 1.2 && z > -1 && z < 8);
+
+function tree(x, z, s = 1) {
+  const g = new THREE.Group(); g.position.set(x, 0, z); g.scale.setScalar(s); g.rotation.y = rand(0, 6);
+  add(g, new THREE.CylinderGeometry(.18, .26, 1.4, 8), 0x8a5a36, [0, .7, 0]);
+  const c = [0x5fae4e, 0x6dbb55, 0x4f9d45][Math.floor(rand(0, 3))];
+  add(g, sphere(1.05), c, [0, 2.1, 0]); add(g, sphere(.75), c, [.55, 1.75, .2]); add(g, sphere(.7), c, [-.5, 1.8, -.15]);
+  if (Math.random() < .4) for (let i = 0; i < 3; i++) add(g, sphere(.1, 8, 6), 0xff6b5a, [Math.cos(i * 2.1) * .9, 2.0 + i * .15, Math.sin(i * 2.1) * .9]);
+  scene.add(g); colliders.push({x, z, r: .7 * s});
+}
+for (let i = 0; i < 30; i++) { const a = i / 30 * Math.PI * 2 + rand(-.05, .05), r = rand(14, 19); tree(Math.cos(a) * r, Math.sin(a) * r, rand(.9, 1.4)); }
+[[-9, 3], [9.5, 2], [-10, -3.5], [6.5, 6.5]].forEach(([x, z]) => tree(x, z, 1));
+
+for (let i = 0; i < 70; i++) {
+  const a = rand(0, 6.28), r = rand(2, 13), x = Math.cos(a) * r, z = Math.sin(a) * r;
+  if (nearPlotOrPath(x, z)) continue;
+  if (Math.random() < .5) {
+    add(scene, new THREE.CylinderGeometry(.02, .02, .3, 4), 0x4f9d45, [x, .15, z]);
+    add(scene, sphere(.11, 8, 6), [0xffffff, 0xffd45c, 0xff9ec4, 0xb9a4ff][i % 4], [x, .32, z], [1, .7, 1]);
+  } else add(scene, new THREE.ConeGeometry(.12, .35, 5), 0x7cc25a, [x, .17, z]);
+}
+for (let z = 7.5; z > 0; z -= 1.3) add(scene, new THREE.CylinderGeometry(.42, .46, .08, 12), 0xe9dcb8, [rand(-.2, .2), .04, z]).castShadow = false;
+
+// pond
+const pond = add(scene, new THREE.CircleGeometry(2.4, 32), mat(0x7cc8e8, {transparent:true, opacity:.9}), [8, .02, -6]);
+pond.rotation.x = -Math.PI / 2; pond.castShadow = false;
+add(scene, new THREE.TorusGeometry(2.4, .18, 6, 32), 0xd9cfb4, [8, .03, -6]).rotation.x = Math.PI / 2;
+colliders.push({x: 8, z: -6, r: 2.5});
+
+// barn
+{
+  const b = new THREE.Group(); b.position.set(-8.5, 0, -7.5); b.rotation.y = .5;
+  add(b, new THREE.BoxGeometry(3.2, 2.2, 2.6), 0xe0574a, [0, 1.1, 0]);
+  add(b, new THREE.CylinderGeometry(1.7, 1.7, 3.6, 3, 1).rotateZ(Math.PI / 2).rotateX(-Math.PI / 2), 0x8a5a36, [0, 2.75, 0], [1, .8, .95]);
+  add(b, new THREE.BoxGeometry(1.1, 1.5, .1), 0xfff2d6, [0, .75, 1.31]);
+  add(b, new THREE.BoxGeometry(.9, .16, .12), 0xe0574a, [0, .75, 1.33]).rotation.z = .9;
+  scene.add(b); colliders.push({x: -8.5, z: -7.5, r: 2.2});
+}
+
+// fence behind plots
+for (let x = -7; x <= 7; x += 1) {
+  add(scene, new THREE.BoxGeometry(.16, .8, .16), 0xf2e3c2, [x, .4, -5.2]);
+  if (x < 7) add(scene, new THREE.BoxGeometry(1, .12, .08), 0xf2e3c2, [x + .5, .55, -5.2]);
+}
+colliders.push(...Array.from({length: 8}, (_, i) => ({x: -7 + i * 2, z: -5.2, r: .6})));
+
+// clouds
+const clouds = Array.from({length: 7}, (_, i) => {
+  const g = new THREE.Group(); g.position.set(rand(-30, 30), rand(9, 13), rand(-30, -8));
+  for (let j = 0; j < 4; j++) add(g, sphere(rand(.9, 1.5)), 0xffffff, [j * 1.2 - 1.8, rand(-.3, .3), rand(-.3, .3)]).castShadow = false;
+  scene.add(g); return g;
+});
+
+// butterflies
+const flies = Array.from({length: 3}, (_, i) => {
+  const g = new THREE.Group(), c = mat([0xffd45c, 0xff9ec4, 0xffffff][i], {side: THREE.DoubleSide});
+  const wing = () => { const w = new THREE.Mesh(new THREE.CircleGeometry(.14, 10), c); w.geometry.translate(.13, 0, 0); return w; };
+  const l = wing(), r = wing(); r.scale.x = -1; g.add(l, r); scene.add(g);
+  return {g, l, r, o: i * 2.1};
+});
+
+// sign with canvas text
+function sign(text, x, z) {
+  const cv = document.createElement('canvas'); cv.width = 256; cv.height = 128;
+  const c = cv.getContext('2d'); c.fillStyle = '#c99a62'; c.fillRect(0, 0, 256, 128);
+  c.fillStyle = '#fff6df'; c.font = '58px Jua, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, 128, 70);
+  const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
+  const wood = mat(0xc99a62), face = mat(0xffffff, {map: tex});
+  add(scene, new THREE.BoxGeometry(.12, 1, .12), 0x8a5a36, [x, .5, z]);
+  add(scene, new THREE.BoxGeometry(1.3, .65, .08), [wood, wood, wood, wood, face, wood], [x, 1.05, z + .07]);
+}
+
+// ---------- carrots ----------
+function makeCarrot(color, golden) {
+  const g = new THREE.Group();
+  const root = add(g, new THREE.ConeGeometry(.22, .78, 14), golden ? mat(color, {emissive: 0x664400}) : color, [0, -.34, 0]);
+  root.rotation.x = Math.PI;
+  for (let i = 0; i < 4; i++) { const lf = add(g, sphere(.08, 8, 6), 0x4fae4a, [0, .22, 0], [1, 4, .5]); lf.rotation.set(Math.sin(i * 1.6) * .3, i * 1.6, (i % 2 ? 1 : -1) * .35); }
+  scene.add(g); return g;
+}
+await document.fonts.load('58px Jua').catch(() => {});
+const carrots = PLOTS.map(([x, z], i) => {
+  add(scene, sphere(1.25, 24, 12), 0x8a5a3a, [x, 0, z], [1.25, .2, 1.05]);
+  for (let k = 0; k < 4; k++) { const sx = x + (k - 1.5) * .55, sz = z + (k % 2 ? .65 : -.65); add(scene, sphere(.06, 6, 4), 0x6dbb55, [sx, .26, sz], [1, 2.4, .6]); }
+  sign(SERVICES[i].sign, x + 1.3, z + 1.25);
+  const c = makeCarrot(SERVICES[i].color, i === 2); c.position.set(x, .26, z);
+  const hole = add(scene, new THREE.CircleGeometry(.22, 14), 0x4a2e1c, [x, .255, z]); hole.rotation.x = -Math.PI / 2; hole.visible = false;
+  return {mesh: c, home: new THREE.Vector3(x, .26, z), hole, service: SERVICES[i], done: false, grow: 1};
+});
+const hitBoxes = carrots.map((c, i) => { const h = new THREE.Mesh(sphere(.9, 8, 6), new THREE.MeshBasicMaterial({visible: false})); h.position.copy(c.home); h.userData.i = i; scene.add(h); return h; });
+const arrow = add(scene, new THREE.ConeGeometry(.16, .32, 4), 0xffd45c); arrow.rotation.x = Math.PI; arrow.castShadow = false;
+
+// ---------- player (chibi farmer) ----------
+const player = new THREE.Group(), body = new THREE.Group(); player.add(body); scene.add(player);
+player.position.set(0, 0, 6);
+const SKIN = 0xffdcc0;
+add(body, new THREE.CapsuleGeometry(.32, .3, 6, 12), 0x6f9fd8, [0, .62, 0]);
+add(body, new THREE.BoxGeometry(.4, .3, .1), 0x6f9fd8, [0, .7, .28]);
+add(body, sphere(.42, 24, 16), SKIN, [0, 1.25, 0]);
+[-1, 1].forEach(s => {
+  add(body, sphere(.065, 10, 8), 0x2b2118, [s * .15, 1.27, .38], [1, 1.5, .6]);
+  add(body, sphere(.06, 10, 8), 0xff9e9e, [s * .25, 1.15, .33], [1, .6, .4]).castShadow = false;
+});
+const hat = new THREE.Group(); hat.position.set(0, 1.6, -.1); hat.rotation.x = -.38; body.add(hat);
+add(hat, new THREE.CylinderGeometry(.62, .62, .04, 24), 0xf2d27a);
+add(hat, new THREE.CylinderGeometry(.3, .37, .3, 20), 0xf2d27a, [0, .15, 0]);
+add(hat, new THREE.CylinderGeometry(.375, .375, .08, 20), 0xe0574a, [0, .05, 0]);
+const limb = (x, y, color, r, len) => { const p = new THREE.Group(); p.position.set(x, y, 0); add(p, new THREE.CapsuleGeometry(r, len, 4, 8), color, [0, -len / 2 - r * .5, 0]); body.add(p); return p; };
+const armL = limb(-.38, .86, SKIN, .09, .22), armR = limb(.38, .86, SKIN, .09, .22);
+const legL = limb(-.14, .34, 0x5a4636, .11, .12), legR = limb(.14, .34, 0x5a4636, .11, .12);
+
+// ---------- particles ----------
+const parts = [];
+function burst(pos, n, color, speed, life, size) {
+  for (let i = 0; i < n; i++) {
+    const m = add(scene, n > 4 ? new THREE.OctahedronGeometry(size) : sphere(size, 8, 6), color, [pos.x, pos.y, pos.z]); m.castShadow = false;
+    const a = rand(0, 6.28), up = rand(.3, 1);
+    parts.push({m, v: new THREE.Vector3(Math.cos(a) * speed, up * speed, Math.sin(a) * speed), life, max: life});
+  }
+}
+
+// ---------- audio ----------
+let ac = null, muted = false;
+function tone(f, t0, dur, type = 'triangle', vol = .14, f2) {
+  if (!ac || muted) return;
+  const t = ac.currentTime + t0, o = ac.createOscillator(), g = ac.createGain();
+  o.type = type; o.frequency.setValueAtTime(f, t); if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+  o.connect(g).connect(ac.destination); o.start(t); o.stop(t + dur);
+}
+const sfx = {
+  tug: () => tone(140, 0, .07, 'square', .03),
+  pop: () => tone(260, 0, .2, 'sine', .3, 1100),
+  fanfare: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, .1 + i * .1, i === 3 ? .5 : .22)),
+  step: () => tone(rand(500, 700), 0, .03, 'sine', .015),
+};
+$('#mute').onclick = e => { muted = !muted; e.currentTarget.textContent = muted ? '🔈' : '🔊'; e.currentTarget.setAttribute('aria-pressed', muted); };
+$('#mute').setAttribute('aria-label', '소리 끄기/켜기');
+
+// ---------- input ----------
+const keys = new Set(); let target = null, pending = null;
+let state = 'intro', pull = null, collected = 0;
+addEventListener('keydown', e => {
+  if (state !== 'play') return;
+  if (e.code === 'Space' || e.code === 'KeyE') { e.preventDefault(); tryPull(); return; }
+  if (/^(Arrow|Key[WASD])/.test(e.code)) { e.preventDefault(); keys.add(e.code); target = pending = null; }
+});
+addEventListener('keyup', e => keys.delete(e.code));
+addEventListener('blur', () => keys.clear());
+
+const ray = new THREE.Raycaster(), ptr = new THREE.Vector2(), floor = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+canvas.addEventListener('pointerdown', e => {
+  if (state !== 'play') return;
+  ensureAudio();
+  ptr.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
+  ray.setFromCamera(ptr, camera);
+  const hit = ray.intersectObjects(hitBoxes)[0];
+  if (hit && !carrots[hit.object.userData.i].done) {
+    const c = carrots[hit.object.userData.i]; pending = c;
+    const d = player.position.clone().sub(c.home).setY(0); if (d.length() < .01) d.set(0, 0, 1);
+    target = c.home.clone().add(d.setLength(.95)).setY(0); return;
+  }
+  const p = new THREE.Vector3(); if (ray.ray.intersectPlane(floor, p)) { target = p; pending = null; }
+});
+$('#pull').onclick = () => tryPull();
+
+const nearest = () => {
+  let best = null, bd = 1.7;
+  for (const c of carrots) { if (c.done || c.grow < 1) continue; const d = Math.hypot(c.home.x - player.position.x, c.home.z - player.position.z); if (d < bd) { bd = d; best = c; } }
+  return best;
+};
+function tryPull(c = nearest()) {
+  if (!c || state !== 'play') return;
+  state = 'pull'; target = pending = null; keys.clear(); $('#prompt').hidden = true;
+  pull = {c, t: 0, from: null, popped: false, shown: false};
+}
+
+// ---------- dialogs ----------
+function ensureAudio() { if (!ac) { try { ac = new AudioContext(); } catch {} } else if (ac.state === 'suspended') ac.resume(); }
+const intro = $('#intro'), card = $('#card');
+intro.addEventListener('cancel', e => e.preventDefault());
+$('#start').onclick = () => { ensureAudio(); intro.close(); state = 'play'; canvas.focus?.(); };
+
+function showCard(s) {
+  const pts = s.points.map(p => `<li>${p}</li>`).join('');
+  $('#card-body').innerHTML = `<span class="tag">🥕 ${s.obj} 수확했다!</span>
+    ${s.img ? `<div class="art" style="background-image:url('${s.img}')" role="img" aria-label="${s.name} 캐릭터"></div>` : '<div class="art seed" aria-hidden="true">🌱</div>'}
+    <p class="note">${s.tag}</p><h2>${s.title}</h2><p>${s.desc}</p>${pts ? `<ul>${pts}</ul>` : ''}${s.note ? `<p class="note">${s.note}</p>` : ''}
+    <div class="actions"><a class="btn" href="${s.cta[1]}" ${s.cta[1].startsWith('http') ? 'target="_blank" rel="noopener"' : ''}>${s.cta[0]}</a><button class="btn ghost" data-close>계속 농사짓기</button></div>`;
+  card.showModal();
+}
+function showDone() {
+  $('#card-body').innerHTML = `<span class="tag">🎉 수확 완료</span><div class="art seed" aria-hidden="true">🧺</div>
+    <h2>밭을 모두<br>수확했어요!</h2><p>작은 아이디어를 일상의 쓸모로. Digital Farmers는 오늘도 다음 씨앗을 가꾸고 있어요.</p>
+    <div class="actions"><button class="btn" data-replant>다시 심기</button><a class="btn ghost" href="./">홈으로</a></div>`;
+  card.showModal();
+}
+card.addEventListener('click', e => {
+  if (e.target.closest('[data-close]')) card.close();
+  if (e.target.closest('[data-replant]')) { card.close(); carrots.forEach(c => { c.done = false; c.grow = 0; c.hole.visible = false; c.mesh.visible = true; c.mesh.position.copy(c.home); c.mesh.rotation.set(0, 0, 0); }); collected = 0; $('#count').textContent = 0; }
+});
+card.addEventListener('close', () => {
+  if (pull?.shown) {
+    const c = pull.c; burst(c.mesh.position, 8, 0xffffff, 2, .5, .1); c.mesh.visible = false; c.done = true; c.hole.visible = true;
+    collected++; $('#count').textContent = collected; pull = null;
+    if (collected === carrots.length) { setTimeout(showDone, 350); return; }
+  }
+  state = 'play';
+});
+
+// ---------- loop ----------
+const clock = new THREE.Clock(), camPos = new THREE.Vector3(), look = new THREE.Vector3();
+let phase = 0, stepAcc = 0, camInit = false;
+const ease = t => 1 + 2.7 * Math.pow(t - 1, 3) + 1.7 * Math.pow(t - 1, 2); // easeOutBack
+const lerpAngle = (a, b, t) => a + (((b - a + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI) * t;
+
+function resize() {
+  renderer.setSize(innerWidth, innerHeight, false);
+  camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+  const far = innerWidth / innerHeight < .8; scene.fog.near = far ? 32 : 24; scene.fog.far = far ? 58 : 46;
+}
+addEventListener('resize', resize); resize();
+
+function update(dt, t) {
+  const p = player.position;
+  let mx = 0, mz = 0;
+  if (state === 'play') {
+    if (keys.has('ArrowLeft') || keys.has('KeyA')) mx--; if (keys.has('ArrowRight') || keys.has('KeyD')) mx++;
+    if (keys.has('ArrowUp') || keys.has('KeyW')) mz--; if (keys.has('ArrowDown') || keys.has('KeyS')) mz++;
+    if (!mx && !mz && target) {
+      const dx = target.x - p.x, dz = target.z - p.z, d = Math.hypot(dx, dz);
+      if (pending && Math.hypot(pending.home.x - p.x, pending.home.z - p.z) < 1.3) tryPull(pending);
+      else if (d < .12) { target = null; if (pending) tryPull(pending); } else { mx = dx / d; mz = dz / d; }
+    }
+  }
+  const len = Math.hypot(mx, mz), moving = len > 0;
+  if (moving) {
+    mx /= len; mz /= len; p.x += mx * 4.6 * dt; p.z += mz * 4.6 * dt;
+    player.rotation.y = lerpAngle(player.rotation.y, Math.atan2(mx, mz), Math.min(1, dt * 14));
+    phase += dt * 13; stepAcc += dt;
+    if (stepAcc > .16) { stepAcc = 0; sfx.step(); burst(p.clone().setY(.08), 1, 0xf3ead0, .6, .45, .09); }
+  }
+  // keep inside farm + solid objects
+  const r = Math.hypot(p.x, p.z); if (r > 12.5) { p.x *= 12.5 / r; p.z *= 12.5 / r; }
+  for (const c of colliders) { const dx = p.x - c.x, dz = p.z - c.z, d = Math.hypot(dx, dz), m = c.r + .35; if (d < m && d > 0) { p.x = c.x + dx / d * m; p.z = c.z + dz / d * m; } }
+
+  // pose
+  let aL = 0, aR = 0, lL = 0, lR = 0, by = 0, sy = 1 + Math.sin(t * 2.4) * .015;
+  if (moving) { const s = Math.sin(phase); lL = s * .7; lR = -s * .7; aL = -s * .6; aR = s * .6; by = Math.abs(Math.cos(phase)) * .09; }
+  if (state === 'pull' && pull) {
+    const P = pull, c = P.c; P.t += dt;
+    player.rotation.y = lerpAngle(player.rotation.y, Math.atan2(c.home.x - p.x, c.home.z - p.z), Math.min(1, dt * 12));
+    if (P.t < 1.1) { // crouch + tug
+      sy = .82; aL = aR = -1.25; by = -.06;
+      const tug = P.t > .3 ? Math.sin(P.t * 34) : 0;
+      c.mesh.rotation.z = tug * .18; c.mesh.position.y = c.home.y + Math.max(0, P.t - .3) * .2;
+      if (tug && Math.sin(P.t * 34) > .97) sfx.tug();
+    } else {
+      if (!P.popped) { P.popped = true; P.from = c.mesh.position.clone(); sfx.pop(); burst(c.home, 4, 0x8a5a3a, 2.2, .5, .1); }
+      const k = Math.min(1, (P.t - 1.1) / .4), head = p.clone().setY(2.45);
+      c.mesh.position.lerpVectors(P.from, head, k); c.mesh.position.y += Math.sin(k * Math.PI) * 1.4;
+      c.mesh.rotation.z = 0; c.mesh.rotation.y += dt * (k < 1 ? 18 : 2.5);
+      aL = aR = -2.9 * Math.min(1, k * 1.5); sy = 1 + Math.sin(Math.min(1, k) * Math.PI) * .12;
+      if (k >= 1 && !P.shown) { P.shown = true; sfx.fanfare(); burst(head, 14, 0xffd45c, 3.2, .8, .09); setTimeout(() => showCard(c.service), 650); }
+    }
+  }
+  armL.rotation.x += (aL - armL.rotation.x) * Math.min(1, dt * 16); armR.rotation.x += (aR - armR.rotation.x) * Math.min(1, dt * 16);
+  legL.rotation.x = lL; legR.rotation.x = lR;
+  body.position.y = by; body.scale.set(2 - sy, sy, 2 - sy);
+
+  // carrots: regrow, idle wiggle, nearest arrow
+  for (const c of carrots) {
+    if (c.grow < 1) { c.grow = Math.min(1, c.grow + dt * 1.6); c.mesh.scale.setScalar(Math.max(.01, ease(c.grow))); }
+    else if (!c.done && pull?.c !== c) c.mesh.rotation.z = Math.sin(t * 2 + c.home.x) * .05;
+  }
+  const n = state === 'play' ? nearest() : null;
+  arrow.visible = !!n; $('#prompt').hidden = !n;
+  if (n) arrow.position.set(n.home.x, 1.45 + Math.sin(t * 5) * .1, n.home.z), arrow.rotation.y = t * 2;
+
+  // ambient
+  clouds.forEach((g, i) => { g.position.x += dt * (.3 + i * .05); if (g.position.x > 34) g.position.x = -34; });
+  flies.forEach(({g, l, r, o}) => {
+    g.position.set(Math.sin(t * .4 + o) * 7, 1 + Math.sin(t * 1.3 + o) * .4, Math.cos(t * .3 + o) * 5 + 1);
+    g.rotation.y = t * .4 + o; l.rotation.y = Math.sin(t * 18) * 1.1; r.rotation.y = -l.rotation.y;
+  });
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const q = parts[i]; q.life -= dt; q.v.y -= 6 * dt; q.m.position.addScaledVector(q.v, dt); q.m.rotation.y += dt * 6;
+    q.m.scale.setScalar(Math.max(.01, q.life / q.max));
+    if (q.life <= 0) { scene.remove(q.m); q.m.geometry.dispose(); parts.splice(i, 1); }
+  }
+
+  // camera: high, gentle follow
+  const portrait = innerWidth / innerHeight < .8;
+  camPos.set(p.x * (portrait ? .6 : .85), portrait ? 17 : 10, p.z + (portrait ? 21 : 12.5));
+  look.set(p.x * (portrait ? .6 : .85), .8, p.z - 1.2);
+  if (!camInit) { camera.position.copy(camPos).add(new THREE.Vector3(0, 6, 6)); camInit = true; }
+  camera.position.lerp(camPos, Math.min(1, dt * 3)); camera.lookAt(look);
+  sun.position.set(p.x + 8, 16, p.z + 6); sun.target.position.set(p.x, 0, p.z);
+}
+
+renderer.setAnimationLoop(() => {
+  const dt = Math.min(clock.getDelta(), .05);
+  update(dt, clock.elapsedTime);
+  renderer.render(scene, camera);
+});
+canvas.classList.add('ready');
+intro.showModal();
+</script>
+</body>
+</html>
