@@ -330,20 +330,54 @@ for (const side of [-1,1]) {
   add(body, sphere(.018), 0xffffff, [side*.17-.015,1.3,.47]);
 }
 add(body, sphere(.065), 0xefbb93, [0,1.19,.465]);
-// Short cut with cowlicks: snug crown, short back, pointed fringe and a few strands poking out under the hat.
-const HAIR=0x5a3a26, hairMat=mat(HAIR,{side:THREE.DoubleSide});
-add(body,new THREE.SphereGeometry(.5,40,24,0,Math.PI*2,0,1.05),hairMat,[0,1.25,0]);               // crown
-add(body,new THREE.SphereGeometry(.5,40,24,Math.PI*.92,Math.PI*1.16,0,1.78),hairMat,[0,1.25,0]);  // short sides + back
-// spike(angle around head, height, length, outward tilt, radius): a cone anchored on the hair surface
-const spike=(a,y,len,tilt,r=.07,roll=0)=>{
-  const g=new THREE.Group(); g.position.set(0,y,0); g.rotation.y=a; body.add(g);
-  const c=add(g,new THREE.ConeGeometry(r,len,10),HAIR,[0,0,.44]); c.geometry.translate(0,len/2,0);
-  c.rotation.set(tilt,0,roll); return c;
-};
-[[-.62,1.5,.2],[-.22,1.53,.24],[.2,1.52,.21],[.58,1.49,.17]].forEach(([a,y,l],i)=>spike(a,y,l,Math.PI*.78,.085,(i-1.5)*.15)); // fringe, pointing down
-spike(-.38,1.6,.26,.55,.06,-.5);                                                                   // front cowlick
-for(const side of [-1,1]) spike(side*Math.PI/2,1.42,.16,Math.PI*.62,.06);                         // sideburns above the ears
-[[Math.PI-.5,.24],[Math.PI,.3],[Math.PI+.45,.22]].forEach(([a,l])=>spike(a,1.45,l,1.05,.07));     // back cowlicks
+// Sculpted chestnut hair: fitted back and curved, tapered locks swept from a side part.
+// Each lock follows the head surface, so it reads as hair rather than separate balls or spikes.
+const HAIR=0x69452e;
+const hairMat=mat(HAIR,{side:THREE.DoubleSide,roughness:.72});
+function hairSurface(phi,theta,lift=0) {
+  const radius=.489+lift;
+  return [Math.sin(phi)*Math.sin(theta)*radius,1.25+Math.cos(theta)*radius,Math.cos(phi)*Math.sin(theta)*radius];
+}
+function hairPatch(rows,columns,point,material) {
+  const vertices=[],indices=[];
+  for(let r=0;r<=rows;r++)for(let c=0;c<=columns;c++) {
+    vertices.push(...point(r/rows,c/columns));
+    if(r<rows&&c<columns){const a=r*(columns+1)+c,b=a+columns+1;indices.push(a,b,a+1,b,b+1,a+1);}
+  }
+  const geometry=new THREE.BufferGeometry();
+  geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
+  geometry.setIndex(indices);geometry.computeVertexNormals();
+  return add(body,geometry,material);
+}
+hairPatch(28,96,(v,u)=>{
+  const phi=u*Math.PI*2,front=Math.max(0,Math.cos(phi));
+  // Short around the ears, softly curved at the nape, higher across the forehead.
+  const end=1.93-.81*Math.pow(front,2)-.12*Math.pow(Math.abs(Math.sin(phi)),8);
+  return hairSurface(phi,v*end,.006);
+},hairMat);
+function sweptLock(root,tip,end,width,color) {
+  const material=mat(color,{side:THREE.DoubleSide,roughness:.68});
+  hairPatch(24,12,(v,u)=>{
+    const flow=v*v*(3-2*v),center=THREE.MathUtils.lerp(root,tip,flow);
+    const taper=Math.pow(Math.max(.001,1-v),.48);
+    const phi=center+(u-.5)*width*taper;
+    const theta=.7+(end-.7)*v;
+    const volume=.012+.025*Math.sin(u*Math.PI)*Math.sin(v*Math.PI);
+    return hairSurface(phi,theta,volume);
+  },material);
+}
+// Broad, soft fringe sweeping left; a smaller right-hand section keeps the part light.
+sweptLock(-.55,-.91,1.5,.55,0x6c4830);
+sweptLock(-.15,-.60,1.43,.54,0x765037);
+sweptLock(.19,-.28,1.36,.52,0x704a31);
+sweptLock(.49,.04,1.28,.47,0x795238);
+sweptLock(.63,.78,1.39,.40,0x704a31);
+sweptLock(.88,1.15,1.54,.39,0x6c4830);
+// Subtle overlapping back sections taper into the neck, without protruding tufts.
+for(let i=0;i<9;i++) {
+  const phi=1.45+i*(Math.PI*2-2.9)/8;
+  sweptLock(phi-.08,phi,1.96-.10*Math.abs(Math.sin(phi)),.48,i%3===0?0x704b32:HAIR);
+}
 const hat = new THREE.Group(); hat.position.set(0, 1.6, -.1); hat.rotation.x = -.38; body.add(hat);
 add(hat, new THREE.CylinderGeometry(.62, .62, .04, 24), 0xf2d27a);
 add(hat, new THREE.CylinderGeometry(.3, .37, .3, 20), 0xf2d27a, [0, .15, 0]);
