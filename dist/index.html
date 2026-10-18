@@ -24,8 +24,8 @@
   </header>
 
   <main id="main">
-    <!-- Signature: a seed that sprouts as you scroll. -->
-    <section class="hero" data-track aria-labelledby="hero-title">
+    <!-- Signature: a seed that sprouts on arrival. -->
+    <section class="hero" aria-labelledby="hero-title">
       <div class="hero-stage wrap">
         <div class="hero-copy">
           <p class="eyebrow r">A digital product studio</p>
@@ -38,27 +38,40 @@
             <defs>
               <radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="var(--accent-soft)" stop-opacity=".9"/><stop offset="1" stop-color="var(--accent-soft)" stop-opacity="0"/></radialGradient>
               <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--leaf-1)"/><stop offset="1" stop-color="var(--leaf-2)"/></linearGradient>
+              <linearGradient id="stemG" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="var(--leaf-2)"/><stop offset="1" stop-color="var(--leaf-1)"/></linearGradient>
             </defs>
             <circle class="sprout-glow" cx="300" cy="300" r="260" fill="url(#glow)"/>
             <g class="furrows" fill="none" stroke="var(--soil-line)" stroke-width="2" stroke-linecap="round">
               <path d="M40 520 Q300 470 560 520"/><path d="M70 556 Q300 506 530 556"/><path d="M110 590 Q300 545 490 590"/>
             </g>
+            <g class="roots" fill="none" stroke="var(--soil-line)" stroke-width="3" stroke-linecap="round">
+              <path pathLength="1" d="M300 504 C296 524 280 536 262 546"/><path pathLength="1" d="M300 504 C306 526 322 538 344 544"/><path pathLength="1" d="M300 504 C300 528 298 548 302 566"/>
+            </g>
             <ellipse cx="300" cy="500" rx="150" ry="26" fill="var(--soil)"/>
-            <path class="stem" pathLength="1" d="M300 498 C300 450 292 410 300 360 C308 310 296 270 302 220 C306 185 300 160 302 132" fill="none" stroke="var(--leaf-2)" stroke-width="9" stroke-linecap="round"/>
-            <path class="leaf leaf-1" d="M300 372 C250 380 200 352 178 300 C236 292 286 318 300 372Z" fill="url(#leaf)"/>
-            <path class="leaf leaf-2" d="M302 262 C352 268 404 238 424 184 C364 178 316 206 302 262Z" fill="url(#leaf)"/>
-            <path class="leaf leaf-3" d="M300 190 C276 192 254 178 246 154 C272 150 294 162 300 190Z" fill="url(#leaf)"/>
-            <g class="bud"><circle cx="302" cy="126" r="16" fill="var(--bloom)"/><circle cx="302" cy="126" r="7" fill="var(--bloom-core)"/></g>
+            <g class="pebbles" fill="var(--soil-line)"><ellipse cx="220" cy="496" rx="9" ry="5"/><ellipse cx="372" cy="502" rx="7" ry="4"/><ellipse cx="404" cy="494" rx="5" ry="3"/><ellipse cx="250" cy="508" rx="5" ry="3"/></g>
+            <g class="grass" fill="var(--leaf-1)">
+              <path d="M168 500 Q160 476 150 468 Q166 474 174 498Z"/><path d="M178 500 Q182 474 176 460 Q190 478 186 500Z"/>
+              <path d="M424 500 Q432 474 444 466 Q428 474 418 498Z"/><path d="M432 502 Q440 482 452 478 Q440 486 438 502Z"/>
+            </g>
+            <path class="stem" pathLength="1" d="M300 498 C300 450 292 410 300 360 C308 310 296 270 302 220 C306 185 300 160 302 140" fill="none" stroke="url(#stemG)" stroke-width="9" stroke-linecap="round"/>
+            <g class="leaf leaf-1"><path d="M300 372 C250 380 200 352 178 300 C236 292 286 318 300 372Z" fill="url(#leaf)"/><path class="vein" d="M296 366 C262 352 222 330 186 304 M252 340 l-6 -18 M226 322 l-10 -10 M268 352 l2 -16"/></g>
+            <g class="leaf leaf-4"><path d="M300 318 C330 324 360 308 372 278 C340 274 310 290 300 318Z" fill="url(#leaf)"/><path class="vein" d="M302 314 C326 304 350 292 368 280"/></g>
+            <g class="leaf leaf-2"><path d="M302 262 C352 268 404 238 424 184 C364 178 316 206 302 262Z" fill="url(#leaf)"/><path class="vein" d="M306 256 C344 236 384 214 418 188 M352 230 l4 -18 M382 210 l6 -12 M330 244 l-2 -14"/></g>
+            <g class="leaf leaf-3"><path d="M300 190 C276 192 254 178 246 154 C272 150 294 162 300 190Z" fill="url(#leaf)"/><path class="vein" d="M298 186 C280 176 262 166 250 156"/></g>
+            <g class="dew"><circle cx="372" cy="214" r="7" fill="#bfe8ff" opacity=".85"/><circle cx="369.5" cy="211.5" r="2.2" fill="#fff"/></g>
+            <g class="bud">
+              <g fill="var(--bloom)"><ellipse cx="302" cy="110" rx="9" ry="15"/><ellipse cx="302" cy="110" rx="9" ry="15" transform="rotate(72 302 126)"/><ellipse cx="302" cy="110" rx="9" ry="15" transform="rotate(144 302 126)"/><ellipse cx="302" cy="110" rx="9" ry="15" transform="rotate(216 302 126)"/><ellipse cx="302" cy="110" rx="9" ry="15" transform="rotate(288 302 126)"/></g>
+              <circle cx="302" cy="126" r="9" fill="var(--bloom-core)"/>
+            </g>
             <g class="pollen" fill="var(--leaf-1)"><circle cx="210" cy="420" r="4"/><circle cx="400" cy="380" r="3"/><circle cx="350" cy="450" r="3.5"/><circle cx="240" cy="250" r="3"/><circle cx="430" cy="300" r="4"/></g>
           </svg>
           <span class="tag tag-1">월급루팡</span><span class="tag tag-2">ondo°</span><span class="tag tag-3">다음 씨앗</span>
         </div>
       </div>
-      <p class="scroll-cue" aria-hidden="true"><span></span>스크롤해서 싹을 틔워 보세요</p>
     </section>
 
     <section class="statement wrap" aria-label="우리가 믿는 것">
-      <p class="words" data-track>좋은 서비스는 거창한 아이디어보다, 매일 마주치는 작은 질문에서 시작됩니다. 우리는 그 질문을 발견하고, 직접 만들고, 사람들의 하루 속에서 더 나은 답으로 키워갑니다.</p>
+      <p class="words" data-track>좋은 서비스는 <em>작은 질문</em>에서 시작됩니다. 우리는 그 질문을 <em>하루의 쓸모</em>로 키웁니다.</p>
     </section>
 
     <section id="services" class="services wrap" aria-labelledby="services-title">

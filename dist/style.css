@@ -63,9 +63,9 @@ h1,h2,h3,p,figure,ol,ul{margin:0}
 .link-arrow span{transition:transform .35s var(--spring)}
 .link-arrow:hover span{transform:translateX(5px)}
 
-/* Hero: sticky scene; JS sets --p (0→1) as you scroll through it */
-.hero{--p:0;position:relative;height:210vh}
-.hero-stage{position:sticky;top:0;height:100vh;height:100svh;display:grid;grid-template-columns:1.05fr 1fr;align-items:center;gap:24px;padding-top:64px}
+/* Hero: the sprout grows by itself on arrival (final state is the base style, so reduced motion just shows it grown) */
+.hero{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:center}
+.hero-stage{width:min(1180px,calc(100% - 48px));display:grid;grid-template-columns:1.05fr 1fr;align-items:center;gap:24px;padding-block:96px 48px}
 .hero-title{font-size:clamp(46px,7.4vw,104px);line-height:1.04;font-weight:800;letter-spacing:-.045em}
 .hero-title .line{display:block;overflow:hidden;padding-bottom:.06em}
 .hero-title .line>span{display:block;animation:rise 1.1s var(--ease) both}
@@ -74,37 +74,50 @@ h1,h2,h3,p,figure,ol,ul{margin:0}
 @keyframes rise{from{transform:translateY(105%)}}
 .hero-sub{margin-top:28px;font-size:clamp(17px,1.6vw,21px);color:var(--muted);line-height:1.6}
 .hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;margin-top:36px}
-.hero-copy{transform:translateY(calc(var(--p) * -40px));opacity:calc(1.6 - var(--p) * 1.4)}
 .sprout{position:relative;justify-self:center;width:min(560px,100%);aspect-ratio:600/620}
-.sprout-svg{width:100%;height:100%;overflow:visible}
-.sprout-glow{transform-origin:300px 300px;transform:scale(calc(.6 + var(--p) * .5));opacity:calc(.3 + var(--p))}
-.stem{stroke-dasharray:1;stroke-dashoffset:var(--stem,1)}
-.leaf,.bud{transform-box:fill-box;transform:scale(var(--s,0));transition:transform .6s var(--spring)}
-.leaf-1{transform-origin:100% 100%;--s:var(--l1,0)}
-.leaf-2{transform-origin:0 100%;--s:var(--l2,0)}
-.leaf-3{transform-origin:100% 100%;--s:var(--l3,0)}
-.bud{transform-origin:50% 50%;--s:var(--b,0)}
-.sprout-svg>g.furrows path{stroke-dasharray:600;stroke-dashoffset:600;animation:draw 1.6s .3s var(--ease) forwards}
-.sprout-svg>g.furrows path:nth-child(2){animation-delay:.45s}.sprout-svg>g.furrows path:nth-child(3){animation-delay:.6s}
-@keyframes draw{to{stroke-dashoffset:0}}
-.pollen circle{animation:float 6s ease-in-out infinite;opacity:.0}
-.pollen circle:nth-child(2){animation-delay:-1.5s}.pollen circle:nth-child(3){animation-delay:-3s}.pollen circle:nth-child(4){animation-delay:-4.2s}.pollen circle:nth-child(5){animation-delay:-2.2s}
+.sprout-svg{width:100%;height:100%;overflow:visible;transform-origin:50% 80%;animation:sway 7s 4s ease-in-out infinite}
+@keyframes sway{50%{transform:rotate(1.4deg)}}
+.sprout-glow{transform-origin:300px 300px;animation:glow 2.6s .4s var(--ease) both, breathe 5s 3s ease-in-out infinite}
+@keyframes glow{from{transform:scale(.4);opacity:0}}
+@keyframes breathe{50%{transform:scale(1.06);opacity:.8}}
+.furrows path{stroke-dasharray:600;animation:draw 1.6s .2s var(--ease) both}
+.furrows path:nth-child(2){animation-delay:.35s}.furrows path:nth-child(3){animation-delay:.5s}
+@keyframes draw{from{stroke-dashoffset:600}}
+.roots path{stroke-dasharray:1;animation:line 1.2s .5s var(--ease) both}
+.roots path:nth-child(2){animation-delay:.65s}.roots path:nth-child(3){animation-delay:.8s}
+.stem{stroke-dasharray:1;animation:line 1.9s .7s var(--ease) both}
+@keyframes line{from{stroke-dashoffset:1}}
+.leaf,.bud,.dew,.grass path{transform-box:fill-box;animation:pop .9s var(--spring) both}
+.leaf-1{transform-origin:100% 100%;animation-delay:1.3s}
+.leaf-4{transform-origin:0 100%;animation-delay:1.55s}
+.leaf-2{transform-origin:0 100%;animation-delay:1.8s}
+.leaf-3{transform-origin:100% 100%;animation-delay:2.15s}
+.bud{transform-origin:50% 50%;animation:bloom 1s 2.5s var(--spring) both}
+.dew{transform-origin:50% 0;animation:drop 1s 3s var(--spring) both}
+.grass path{transform-origin:50% 100%;animation-delay:.9s}
+.grass path:nth-child(2){animation-delay:1s}.grass path:nth-child(3){animation-delay:1.1s}.grass path:nth-child(4){animation-delay:1.2s}
+@keyframes pop{from{transform:scale(0)}}
+@keyframes bloom{from{transform:scale(0) rotate(-90deg)}}
+@keyframes drop{from{transform:translateY(-30px) scale(0);opacity:0}}
+.vein{fill:none;stroke:rgb(255 255 255 / .45);stroke-width:2;stroke-linecap:round}
+.pollen circle{opacity:0;animation:float 6s 3s ease-in-out infinite}
+.pollen circle:nth-child(2){animation-delay:4.5s}.pollen circle:nth-child(3){animation-delay:6s}.pollen circle:nth-child(4){animation-delay:3.8s}.pollen circle:nth-child(5){animation-delay:5.2s}
 @keyframes float{0%{transform:translateY(0);opacity:0}30%{opacity:.8}100%{transform:translateY(-90px);opacity:0}}
-.sprout-svg{animation:sway 7s ease-in-out infinite;transform-origin:50% 80%}
-@keyframes sway{50%{transform:rotate(1.2deg)}}
-.tag{position:absolute;padding:8px 14px;border-radius:999px;background:var(--tile);box-shadow:0 8px 30px rgb(0 0 0 / .08);font-size:15px;font-weight:600;opacity:0;transform:translateY(12px) scale(.9);transition:opacity .5s var(--ease),transform .6s var(--spring)}
-.tag-1{left:2%;top:46%}.tag-2{right:0;top:27%}.tag-3{left:58%;top:6%}
-.tag.on{opacity:1;transform:none}
-.scroll-cue{position:absolute;left:50%;bottom:0;transform:translateX(-50%);position:sticky;top:calc(100svh - 64px);display:flex;flex-direction:column;align-items:center;gap:8px;width:max-content;margin:-60px auto 0;font-size:14px;color:var(--muted);opacity:calc(1 - var(--p) * 4)}
-.scroll-cue span{width:22px;height:34px;border:2px solid var(--muted);border-radius:12px;position:relative}
-.scroll-cue span::after{content:"";position:absolute;left:50%;top:6px;width:4px;height:7px;margin-left:-2px;border-radius:2px;background:var(--muted);animation:wheel 1.6s ease-in-out infinite}
-@keyframes wheel{60%{transform:translateY(9px);opacity:0}}
+/* Tags sit right at the leaf tips and the bloom */
+.tag{position:absolute;translate:-50% -50%;padding:8px 14px;border-radius:999px;background:var(--tile);box-shadow:0 8px 30px rgb(0 0 0 / .1);font-size:15px;font-weight:600;white-space:nowrap;animation:tagIn .7s var(--spring) both}
+.tag::after{content:"";position:absolute;width:8px;height:8px;border-radius:50%;background:var(--leaf-2)}
+.tag-1{left:26%;top:43%;animation-delay:2.4s}.tag-1::after{right:-14px;top:50%;margin-top:-4px}
+.tag-2{left:77%;top:24%;animation-delay:2.75s}.tag-2::after{left:-14px;top:50%;margin-top:-4px}
+.tag-3{left:50%;top:9%;animation-delay:3.1s}.tag-3::after{left:50%;bottom:-14px;margin-left:-4px}
+@keyframes tagIn{from{opacity:0;transform:translateY(10px) scale(.85)}}
 
 /* Statement: words light up with scroll */
-.statement{padding-block:18vh 14vh}
+.statement{padding-block:10vh 10vh}
 .words{font-size:clamp(28px,4.2vw,56px);line-height:1.35;font-weight:700;letter-spacing:-.03em;max-width:1000px}
 .words .w{opacity:.16;transition:opacity .25s}
 .words .w.on{opacity:1}
+.words em{font-style:normal}
+.words .hl{color:var(--accent)}
 
 /* Sections */
 .section-head{margin-bottom:48px}
@@ -218,10 +231,8 @@ dialog::backdrop{background:rgb(0 0 0 / .4);backdrop-filter:blur(6px)}
 @media(max-width:900px){
   .nav,.nav-cta{display:none}
   .menu-button{display:block}
-  .hero{height:180vh}
-  .hero-stage{grid-template-columns:1fr;align-content:center;gap:8px;padding-top:72px}
-  .sprout{width:min(340px,80%);order:2}
-  .hero-copy{opacity:1}
+  .hero-stage{grid-template-columns:1fr;gap:8px;padding-block:88px 32px}
+  .sprout{width:min(360px,88%)}
   .tile,.tile-ondo,.farm-card{grid-template-columns:1fr;padding:36px 28px;min-height:0}
   .tile-ondo .tile-copy{order:0}
   .tile-art{min-height:300px}
@@ -239,13 +250,8 @@ dialog::backdrop{background:rgb(0 0 0 / .4);backdrop-filter:blur(6px)}
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
-  .hero{height:auto}.hero-stage{position:relative;height:auto;min-height:100svh}
-  .hero,.tile,.grow{--p:1!important}
-  .hero-copy{opacity:1;transform:none}
-  .stem{--stem:0}.leaf-1,.leaf-2,.leaf-3,.bud{--s:1}
-  .tag{opacity:1;transform:none}.scroll-cue{display:none}
+  .tile,.grow{--p:1!important}
   .words .w{opacity:1}
   .js .r{opacity:1;transform:none;filter:none}
   .tile,.js .tile.r.in{transform:none}
-  .sprout-svg>g.furrows path{stroke-dashoffset:0}
 }

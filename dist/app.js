@@ -24,7 +24,9 @@ document.querySelectorAll('dialog').forEach(d => {
 
 // Statement: split into words so each can light up
 document.querySelectorAll('.words').forEach(el => {
-  el.innerHTML = el.textContent.trim().split(/\s+/).map(w => `<span class="w">${w}</span>`).join(' ');
+  // Keep the original spacing so particles like "질문에서" stay attached to the highlighted word.
+  el.innerHTML = [...el.childNodes].map(n => n.textContent.split(/(\s+)/).map(t =>
+    /^\s*$/.test(t) ? t : `<span class="w${n.nodeName === 'EM' ? ' hl' : ''}">${t}</span>`).join('')).join('').trim();
 });
 
 // Header: glass after scrolling, hide while scrolling down
@@ -33,8 +35,6 @@ let lastY = scrollY;
 
 // Scroll-linked progress (--p) for [data-track] elements
 const tracked = [...document.querySelectorAll('[data-track]')];
-const hero = document.querySelector('.hero');
-const tags = [...document.querySelectorAll('.tag')];
 function frame() {
   const y = scrollY, vh = innerHeight;
   header?.classList.toggle('scrolled', y > 8);
@@ -43,23 +43,12 @@ function frame() {
   if (reduce) return;
   for (const el of tracked) {
     const r = el.getBoundingClientRect();
-    // Hero: progress through its sticky run. Others: progress across the viewport.
-    const p = el === hero ? clamp(-r.top / (r.height - vh)) : clamp((vh - r.top) / (vh + r.height));
+    const p = clamp((vh - r.top) / (vh + r.height));
     el.style.setProperty('--p', p.toFixed(4));
     if (el.classList.contains('words')) {
       const ws = el.children, lit = Math.floor(clamp((p - .2) / .45) * ws.length);
       for (let i = 0; i < ws.length; i++) ws[i].classList.toggle('on', i < lit);
     }
-  }
-  if (hero) {
-    const p = parseFloat(hero.style.getPropertyValue('--p')) || 0;
-    const g = .22 + p * .78; // the seed is already sprouting on load
-    hero.style.setProperty('--stem', (1 - g).toFixed(4));
-    hero.style.setProperty('--l1', clamp((g - .3) / .15).toFixed(3));
-    hero.style.setProperty('--l2', clamp((g - .55) / .15).toFixed(3));
-    hero.style.setProperty('--l3', clamp((g - .78) / .1).toFixed(3));
-    hero.style.setProperty('--b', clamp((g - .9) / .1).toFixed(3));
-    tags.forEach((t, i) => t.classList.toggle('on', p > .35 + i * .2));
   }
 }
 let ticking = false;
