@@ -45,33 +45,56 @@ dialog[open]{animation:pop .45s cubic-bezier(.3,1.6,.5,1)}
 .keys kbd{background:#f3ead0;text-align:center}
 @media(max-width:560px){.title{display:none}.hud{justify-content:space-between}.pill{font-size:14px;padding:8px 13px}.hint{font-size:12px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-.touch{display:none}@media(pointer:coarse){.pc,#pull kbd{display:none}.touch{display:inline}}
+.touch{display:none}@media(pointer:coarse),(max-width:600px){.pc,#pull kbd{display:none}.touch{display:inline}}
 .fallback{position:fixed;inset:0;display:grid;place-items:center;padding:24px;text-align:center}
+
+/* Farm-only art direction: soft toy materials, linen dialogue, garden-green controls. */
+:root{--cream:#fffdf0;--brown:#354b37;--leaf:#387455;--line:#e3dfc5;--sky:#9ebfb3}
+.hud{inset:24px 28px auto;gap:12px}.pill{padding:13px 19px;background:#fffdf1f2;box-shadow:0 3px 0 #d5d9bd,0 8px 24px #355b3720;font-size:15px}
+.title{background:none;box-shadow:none;padding-left:8px;font-size:22px;letter-spacing:-.5px}.title small{display:block;font:10px -apple-system,sans-serif;letter-spacing:3px;margin-top:5px;color:#456c51}
+.count b{color:#a85025;font-size:22px;margin:0 5px}.btn{background:#387455;box-shadow:0 4px 0 #255239,0 8px 20px #28452a20;font-size:17px;padding:13px 22px}.btn:active{box-shadow:0 1px 0 #255239}.btn.ghost{box-shadow:none;background:#edeedc}
+.hint{bottom:22px;background:#fffdf0e8;padding:10px 20px;color:#436048}.prompt{bottom:78px}
+dialog{width:440px;max-height:calc(100dvh - 48px);overflow:auto;padding:20px 8px 10px;max-width:calc(100vw - 24px)}
+dialog::backdrop{background:#233d3225;backdrop-filter:blur(3px)}
+.bubble{padding:32px;border-radius:28px;border:2px solid #fffef6;box-shadow:0 5px 0 #dcdcc2,0 18px 60px #294c3429;background:var(--cream)}
+.tag{background:#e9c675;color:#554126;box-shadow:none;font-size:15px;left:28px;padding:8px 18px;top:-18px;transform:rotate(-3deg)}
+.bubble h2{color:#354b37;font-size:30px}.bubble p{color:#53624d;font-size:15px;line-height:1.8}.bubble li{background:#e9edd8;color:#45603d;font-size:13px}.art{height:155px;background-color:#f0f0df}
+#intro{position:fixed;top:auto;bottom:68px;width:650px;margin:0 auto;overflow:visible;max-width:calc(100vw - 40px)}
+#intro::backdrop{background:transparent;backdrop-filter:none}#intro .bubble{padding:26px 30px;display:grid;grid-template-columns:1fr auto;gap:0 24px}#intro h2{font-size:26px;margin-bottom:8px}#intro p{max-width:380px;margin:0}#intro .actions{grid-column:2;grid-row:1 / 3;align-self:center;display:flex;flex-direction:column;align-items:stretch}#intro .actions a{font-size:13px;padding:8px;text-align:center;background:none;justify-content:center}
+#intro .keys{display:none}.journal{position:fixed;left:28px;top:114px;padding:18px 22px;border-radius:8px 24px 24px 24px;background:#fffdf0e8;box-shadow:0 5px 20px #355b3710;pointer-events:none}.journal small{font-size:12px;color:#697c53}.journal p{margin:7px 0 0;font-size:17px;line-height:1.5}.journal span{color:#9c572c}
+@media(max-width:600px){.hud{inset:16px 16px auto;gap:8px}.pill{padding:10px 13px}.title{display:none}.journal{top:79px;left:16px;padding:12px 16px}.journal p{font-size:14px}.journal small{font-size:11px}#intro{bottom:61px}#intro .bubble{display:block;padding:25px 22px 20px}#intro h2{font-size:23px}#intro p{font-size:14px}#intro .actions{flex-direction:row;margin-top:16px;gap:8px}#intro .btn{font-size:15px;padding:11px 17px}.hint{font-size:11px;bottom:16px;padding:9px 13px}.bubble{padding:27px 22px}.bubble h2{font-size:26px}.art{height:120px}.actions .btn{font-size:15px}.journal.hidden{display:none}}
+.crop-target{position:fixed;width:74px;height:84px;transform:translate(-50%,-65%);border-radius:50%;border:2px solid transparent;touch-action:manipulation}.crop-target:hover{border-color:#fff9d9;background:#ffffff14}.crop-target:focus-visible{outline:3px solid #387455;background:#fff9d944}.crop-target[hidden]{display:none}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 </head>
 <body>
-<canvas id="scene" aria-label="디지털 파머 농장. 캐릭터를 움직여 당근을 뽑으면 서비스 소개가 나옵니다."></canvas>
+<canvas id="scene" tabindex="0" aria-label="디지털 파머 농장. 캐릭터를 움직여 당근을 뽑으면 서비스 소개가 나옵니다."></canvas>
+<div id="loading" class="fallback" role="status"><div class="bubble"><h2>작은 농장을 준비하고 있어요.</h2><p>잠시만 기다려 주세요.</p><a href="./#services">서비스 목록으로 보기 →</a></div></div>
 <header class="hud">
   <a class="pill" href="./">← 홈</a>
-  <span class="pill title">DF 농장 · 디지털 파머 농사하기</span>
-  <span class="pill count" aria-live="polite">🥕 수확 <b id="count">0</b>/3</span>
+  <span class="pill title">작은 디지털 농장<small>DIGITAL FARMERS</small></span>
+  <span class="pill count" aria-live="polite">수확 바구니 <b id="count">0</b>/3</span>
   <button class="pill" id="mute" aria-pressed="false">🔊</button>
-</header>
+</header><aside class="journal"><small>오늘의 작은 할 일</small><p>당근 세 개에 담긴<br><span>우리의 서비스</span>를 발견해요.</p></aside>
 <div class="prompt" id="prompt" hidden><button class="btn" id="pull">🥕 당근 뽑기 <kbd>Space</kbd></button></div>
 <p class="hint"><span class="pc">이동 <b>WASD·방향키</b> 또는 <b>클릭</b> · 뽑기 <b>Space</b></span><span class="touch">당근이나 땅을 톡 눌러 이동해요</span></p>
 
 <dialog id="intro"><div class="bubble">
   <span class="tag">디지털 파머</span>
-  <h2>어서 와요,<br>DF 농장에!</h2>
-  <p>이 밭에는 우리가 정성껏 키운 서비스가 자라고 있어요. 당근을 쑥 뽑아서 무엇이 자랐는지 확인해 보세요.</p>
+  <h2>잘 왔어요, 디지털 농장에.</h2>
+  <p>작은 아이디어를 심고, 일상의 쓸모를 키워요.<br>당근을 누르면 농부가 다가가 쑥 뽑아 줄 거예요.</p>
   <div class="keys"><kbd>WASD</kbd><span>걷기 (방향키도 돼요)</span><kbd>터치</kbd><span>누른 곳으로 걸어가기</span><kbd>Space</kbd><span>가까운 당근 뽑기</span></div>
   <div class="actions"><button class="btn" id="start">밭으로 나가기</button><a class="btn ghost" href="./#services">목록으로 보기</a></div>
 </div></dialog>
 <dialog id="card"><div class="bubble" id="card-body"></div></dialog>
 
 <script type="module">
-import * as THREE from 'three';
+let THREE;
+try { THREE = await import('three'); }
+catch (error) {
+  document.querySelector('#loading').innerHTML='<div class="bubble"><h2>농장을 불러오지 못했어요.</h2><p>인터넷 연결을 확인하고 다시 열어 주세요.</p><a class="btn" href="./#services">서비스 목록 보기</a></div>';
+  throw error;
+}
 const $ = s => document.querySelector(s);
 
 const SERVICES = [
@@ -94,92 +117,135 @@ catch { document.body.innerHTML = '<div class="fallback"><div class="bubble"><h2
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-const SKY = 0xbfe6f2;
+const SKY = 0x9ebfb3;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = .88;
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(SKY);
 scene.fog = new THREE.Fog(SKY, 24, 46);
 const camera = new THREE.PerspectiveCamera(34, 1, .1, 120);
 
-scene.add(new THREE.HemisphereLight(0xfff6e0, 0x6c8f4a, 1.6));
-const sun = new THREE.DirectionalLight(0xfff1d6, 2.2);
-sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -.0005;
+scene.add(new THREE.HemisphereLight(0xfff3df, 0x657c60, 1.65));
+const sun = new THREE.DirectionalLight(0xffecd0, 2.1);
+sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -.0005; sun.shadow.normalBias = .035; sun.shadow.radius = 4;
 Object.assign(sun.shadow.camera, {left:-18, right:18, top:18, bottom:-18, near:1, far:60});
 scene.add(sun, sun.target);
 
-// Toon shading + "rolling log" world bend (the Animal Crossing horizon), done in view space.
-// ponytail: raycasts use the unbent world, so taps far from the player land slightly off; fine at this bend strength.
-const grad = new THREE.DataTexture(new Uint8Array([110, 185, 255]), 3, 1, THREE.RedFormat);
-grad.minFilter = grad.magFilter = THREE.NearestFilter; grad.needsUpdate = true;
-const bend = sh => { sh.vertexShader = sh.vertexShader.replace('#include <project_vertex>',
-  '#include <project_vertex>\n float bz = mvPosition.z + 16.0; mvPosition.y -= bz * bz * 0.0055; gl_Position = projectionMatrix * mvPosition;'); };
+// Smooth, matte materials keep rounded models readable without hard toon bands.
 const mats = {};
 const mat = (color, extra) => {
-  const key = color + (extra ? JSON.stringify(Object.keys(extra)) + Math.random() : '');
-  if (mats[key]) return mats[key];
-  const m = new THREE.MeshToonMaterial({color, gradientMap:grad, ...extra});
-  m.onBeforeCompile = bend;
-  return mats[key] = m;
+  if (!extra && mats[color]) return mats[color];
+  const m = new THREE.MeshStandardMaterial({color, roughness:.86, metalness:0, ...extra});
+  if (!extra) mats[color] = m;
+  return m;
 };
 const add = (parent, geo, color, [x=0, y=0, z=0] = [], scale) => {
   const m = new THREE.Mesh(geo, typeof color === 'number' ? mat(color) : color);
   m.position.set(x, y, z); if (scale) m.scale.set(...scale);
   m.castShadow = m.receiveShadow = true; parent.add(m); return m;
 };
-const sphere = (r, w=16, h=12) => new THREE.SphereGeometry(r, w, h);
-const rand = (a, b) => a + Math.random() * (b - a);
+const sphere = (r, w=24, h=18) => new THREE.SphereGeometry(r, w, h);
+let seed = 27;
+const rand = (a, b) => { seed = (seed * 1664525 + 1013904223) >>> 0; return a + seed / 4294967296 * (b - a); };
 
 // ---------- world ----------
-const ground = add(scene, new THREE.CircleGeometry(70, 64), 0x9bd36a);
+const ground = add(scene, new THREE.CircleGeometry(70, 64), 0x79a65d);
 ground.rotation.x = -Math.PI / 2; ground.castShadow = false;
 
 const colliders = []; // {x,z,r}
-const PLOTS = [[-4.2, -2], [0, -2.6], [4.2, -2]];
+const PLOTS = [[-3.9, -1], [0, -2], [3.9, -1]];
 const nearPlotOrPath = (x, z) => PLOTS.some(([px, pz]) => Math.hypot(x - px, z - pz) < 2.2) || (Math.abs(x) < 1.2 && z > -1 && z < 8);
 
 function tree(x, z, s = 1) {
   const g = new THREE.Group(); g.position.set(x, 0, z); g.scale.setScalar(s); g.rotation.y = rand(0, 6);
   add(g, new THREE.CylinderGeometry(.18, .26, 1.4, 8), 0x8a5a36, [0, .7, 0]);
-  const c = [0x5fae4e, 0x6dbb55, 0x4f9d45][Math.floor(rand(0, 3))];
+  const c = [0x69a465, 0x80b56c, 0x58966a][Math.floor(rand(0, 3))];
   add(g, sphere(1.05), c, [0, 2.1, 0]); add(g, sphere(.75), c, [.55, 1.75, .2]); add(g, sphere(.7), c, [-.5, 1.8, -.15]);
-  if (Math.random() < .4) for (let i = 0; i < 3; i++) add(g, sphere(.1, 8, 6), 0xff6b5a, [Math.cos(i * 2.1) * .9, 2.0 + i * .15, Math.sin(i * 2.1) * .9]);
+  if (rand(0,1) < .7) for (let i = 0; i < 5; i++) add(g, sphere(.16, 12, 8), 0xff6b5a, [Math.cos(i * 2.1) * .9, 2.0 + i * .15, Math.sin(i * 2.1) * .9]);
   scene.add(g); colliders.push({x, z, r: .7 * s});
 }
-for (let i = 0; i < 30; i++) { const a = i / 30 * Math.PI * 2 + rand(-.05, .05), r = rand(14, 19); tree(Math.cos(a) * r, Math.sin(a) * r, rand(.9, 1.4)); }
+for (let i = 0; i < 30; i++) { const a = i / 30 * Math.PI * 2 + rand(-.05, .05), r = rand(14, 19); tree(Math.cos(a) * r, Math.sin(a) * r, rand(1.1, 1.7)); }
 [[-9, 3], [9.5, 2], [-10, -3.5], [6.5, 6.5]].forEach(([x, z]) => tree(x, z, 1));
 
 for (let i = 0; i < 70; i++) {
   const a = rand(0, 6.28), r = rand(2, 13), x = Math.cos(a) * r, z = Math.sin(a) * r;
   if (nearPlotOrPath(x, z)) continue;
-  if (Math.random() < .5) {
+  if (rand(0,1) < .5) {
     add(scene, new THREE.CylinderGeometry(.02, .02, .3, 4), 0x4f9d45, [x, .15, z]);
-    add(scene, sphere(.11, 8, 6), [0xffffff, 0xffd45c, 0xff9ec4, 0xb9a4ff][i % 4], [x, .32, z], [1, .7, 1]);
+    add(scene, sphere(.11, 8, 6), [0xfff9dc, 0xf4cc64, 0xeaa7a0, 0xfff9dc][i % 4], [x, .32, z], [1, .7, 1]);
   } else add(scene, new THREE.ConeGeometry(.12, .35, 5), 0x7cc25a, [x, .17, z]);
 }
 for (let z = 7.5; z > 0; z -= 1.3) add(scene, new THREE.CylinderGeometry(.42, .46, .08, 12), 0xe9dcb8, [rand(-.2, .2), .04, z]).castShadow = false;
 
+// A sandy garden walk, low stones and flower clusters make the clearing feel lived in.
+const walk = add(scene, new THREE.PlaneGeometry(2.3, 16), 0xc6b588, [0,.012,6]); walk.rotation.x=-Math.PI/2; walk.castShadow=false;
+const crosswalk = add(scene, new THREE.PlaneGeometry(13,1.6), 0xc6b588, [0,.015,1]); crosswalk.rotation.x=-Math.PI/2; crosswalk.castShadow=false;
+for (let i=0;i<90;i++) {
+  const x=rand(-12,12), z=rand(-9,10);
+  if(nearPlotOrPath(x,z) || Math.abs(z-1)<1.1) continue;
+  const tuft=new THREE.Group();tuft.position.set(x,.015,z);
+  for(let j=0;j<3;j++) {const leaf=add(tuft,sphere(.045,8,6),0x83b366,[(j-1)*.08,.12,0],[.7,3,.6]);leaf.rotation.z=(j-1)*.4;}
+  scene.add(tuft);
+}
+for(const [x,z] of [[-5,3],[5,3],[-7,-3],[6,-4],[-4,6]]) {
+  for(let k=0;k<4;k++) {
+    const fx=x+rand(-.5,.5),fz=z+rand(-.5,.5),fy=rand(.22,.38);
+    add(scene,new THREE.CylinderGeometry(.018,.018,fy,5),0x58915b,[fx,fy/2,fz]);
+    for(let j=0;j<5;j++) add(scene,sphere(.075,10,8),k%2?0xfff5d6:0xe9aa9a,[fx+Math.cos(j*1.257)*.09,fy,fz+Math.sin(j*1.257)*.09],[1,.6,1]);
+    add(scene,sphere(.045),0xe4ba59,[fx,fy+.03,fz]);
+  }
+}
 // pond
-const pond = add(scene, new THREE.CircleGeometry(2.4, 32), mat(0x7cc8e8, {transparent:true, opacity:.9}), [8, .02, -6]);
+const pond = add(scene, new THREE.CircleGeometry(2.4, 32), mat(0x72bdc0, {transparent:true, opacity:.9}), [8, .02, -6]);
 pond.rotation.x = -Math.PI / 2; pond.castShadow = false;
-add(scene, new THREE.TorusGeometry(2.4, .18, 6, 32), 0xd9cfb4, [8, .03, -6]).rotation.x = Math.PI / 2;
+add(scene, new THREE.TorusGeometry(2.4, .18, 6, 32), 0xc7bd94, [8, .03, -6]).rotation.x = Math.PI / 2;
 colliders.push({x: 8, z: -6, r: 2.5});
 
+for(let i=0;i<16;i++) {const a=i/16*Math.PI*2;add(scene,sphere(rand(.2,.35),12,8),0xbfc3a4,[8+Math.cos(a)*2.45,.1,-6+Math.sin(a)*2.45],[1,.6,1]);}
+for(const [x,z] of [[7.3,-5.5],[8.6,-6.3],[7.8,-7]]) {const pad=add(scene,new THREE.CylinderGeometry(.27,.27,.025,18),0x659a65,[x,.045,z]);pad.castShadow=false;}
 // barn
 {
-  const b = new THREE.Group(); b.position.set(-8.5, 0, -7.5); b.rotation.y = .5;
-  add(b, new THREE.BoxGeometry(3.2, 2.2, 2.6), 0xe0574a, [0, 1.1, 0]);
-  add(b, new THREE.CylinderGeometry(1.7, 1.7, 3.6, 3, 1).rotateZ(Math.PI / 2).rotateX(-Math.PI / 2), 0x8a5a36, [0, 2.75, 0], [1, .8, .95]);
-  add(b, new THREE.BoxGeometry(1.1, 1.5, .1), 0xfff2d6, [0, .75, 1.31]);
-  add(b, new THREE.BoxGeometry(.9, .16, .12), 0xe0574a, [0, .75, 1.33]).rotation.z = .9;
-  scene.add(b); colliders.push({x: -8.5, z: -7.5, r: 2.2});
+  const b = new THREE.Group(); b.position.set(-7, 0, -7); b.rotation.y = .18;
+  add(b, new THREE.BoxGeometry(3.2, 2.2, 2.6), 0xf0dfb4, [0, 1.1, 0]);
+  for(const side of [-1,1]) {
+    const roof=add(b,new THREE.BoxGeometry(2.15,.18,3.25),0x648f7e,[side*.8,2.7,0]);roof.rotation.z=-side*.56;
+    for(let j=0;j<10;j++) {const slat=add(b,new THREE.BoxGeometry(2.18,.05,.045),0x547e6e,[side*.8,2.8,-1.5+j*.33]);slat.rotation.z=-side*.56;}
+  }
+  add(b,new THREE.BoxGeometry(.14,2.2,.14),0xc9b88e,[-1.55,1.1,1.32]);
+  add(b,new THREE.BoxGeometry(.14,2.2,.14),0xc9b88e,[1.55,1.1,1.32]);
+  add(b,new THREE.BoxGeometry(.85,1.55,.12),0x8b7254,[0,.78,1.33]);
+  add(b,sphere(.05),0xf0d081,[.27,.8,1.42]);
+  for(const x of [-1,1]) {
+    add(b,new THREE.BoxGeometry(.64,.68,.12),0xfff3d4,[x,1.45,1.34]);
+    add(b,new THREE.BoxGeometry(.49,.52,.13),0x91b9b2,[x,1.45,1.36]);
+    add(b,new THREE.BoxGeometry(.055,.54,.15),0xfff3d4,[x,1.45,1.38]);
+    add(b,new THREE.BoxGeometry(.52,.055,.15),0xfff3d4,[x,1.45,1.38]);
+    add(b,new THREE.BoxGeometry(.8,.18,.34),0xb88b62,[x,1.03,1.49]);
+    for(let j=0;j<3;j++)add(b,sphere(.13),0x77a15c,[x+(j-1)*.22,1.18,1.49]);
+  }
+  add(b,new THREE.BoxGeometry(.5,.9,.5),0xc29c79,[.9,2.95,-.65]);
+  scene.add(b); colliders.push({x: -7, z: -7, r: 2.2});
 }
 
 // fence behind plots
 for (let x = -7; x <= 7; x += 1) {
   add(scene, new THREE.BoxGeometry(.16, .8, .16), 0xf2e3c2, [x, .4, -5.2]);
-  if (x < 7) add(scene, new THREE.BoxGeometry(1, .12, .08), 0xf2e3c2, [x + .5, .55, -5.2]);
+  add(scene, sphere(.13,12,8), 0xf2e3c2, [x,.83,-5.2]);
+  if (x < 7) for(const y of [.3,.65]) add(scene, new THREE.BoxGeometry(1, .14, .1), 0xf2e3c2, [x + .5, y, -5.2]);
 }
 colliders.push(...Array.from({length: 8}, (_, i) => ({x: -7 + i * 2, z: -5.2, r: .6})));
 
+// Harvest crates and watering can at the edge of the garden.
+for(const [x,z] of [[-5.9,-3.7],[-6.7,-3.9]]) {
+  add(scene,new THREE.BoxGeometry(.7,.55,.65),0xbe9463,[x,.28,z]);
+  for(const y of [.12,.3,.48])add(scene,new THREE.BoxGeometry(.73,.045,.69),0x997348,[x,y,z]);
+  for(let i=0;i<3;i++)add(scene,sphere(.14),0xe7a154,[x+(i-1)*.17,.6,z]);
+}
+const can=new THREE.Group();can.position.set(5.7,0,1.4);scene.add(can);
+add(can,new THREE.CylinderGeometry(.28,.29,.45,24),0x87aeb0,[0,.3,0]);
+const spout=add(can,new THREE.CylinderGeometry(.065,.09,.55,12),0x87aeb0,[.38,.37,0]);spout.rotation.z=-.8;
+add(can,new THREE.TorusGeometry(.23,.04,8,24),0x87aeb0,[-.25,.35,0]);
 // clouds
 const clouds = Array.from({length: 7}, (_, i) => {
   const g = new THREE.Group(); g.position.set(rand(-30, 30), rand(9, 13), rand(-30, -8));
@@ -198,10 +264,10 @@ const flies = Array.from({length: 3}, (_, i) => {
 // sign with canvas text
 function sign(text, x, z) {
   const cv = document.createElement('canvas'); cv.width = 256; cv.height = 128;
-  const c = cv.getContext('2d'); c.fillStyle = '#c99a62'; c.fillRect(0, 0, 256, 128);
-  c.fillStyle = '#fff6df'; c.font = '58px Jua, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, 128, 70);
+  const c = cv.getContext('2d'); c.fillStyle = '#e7cb91'; c.fillRect(0, 0, 256, 128); c.strokeStyle='#d5b87e'; c.lineWidth=5; c.strokeRect(9,9,238,110);
+  c.fillStyle = '#57492f'; c.font = '58px Jua, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, 128, 70);
   const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
-  const wood = mat(0xc99a62), face = mat(0xffffff, {map: tex});
+  const wood = mat(0xe7cb91), face = mat(0xffffff, {map: tex});
   add(scene, new THREE.BoxGeometry(.12, 1, .12), 0x8a5a36, [x, .5, z]);
   add(scene, new THREE.BoxGeometry(1.3, .65, .08), [wood, wood, wood, wood, face, wood], [x, 1.05, z + .07]);
 }
@@ -209,34 +275,73 @@ function sign(text, x, z) {
 // ---------- carrots ----------
 function makeCarrot(color, golden) {
   const g = new THREE.Group();
-  const root = add(g, new THREE.ConeGeometry(.22, .78, 14), golden ? mat(color, {emissive: 0x664400}) : color, [0, -.34, 0]);
+  const root = add(g, new THREE.ConeGeometry(.26, .85, 24), golden ? mat(color, {emissive: 0x664400}) : color, [0, -.34, 0]);
   root.rotation.x = Math.PI;
-  for (let i = 0; i < 4; i++) { const lf = add(g, sphere(.08, 8, 6), 0x4fae4a, [0, .22, 0], [1, 4, .5]); lf.rotation.set(Math.sin(i * 1.6) * .3, i * 1.6, (i % 2 ? 1 : -1) * .35); }
+  for (let i = 0; i < 4; i++) { const lf = add(g, sphere(.1, 16, 12), 0x438e52, [0, .22, 0], [1, 4, .5]); lf.rotation.set(Math.sin(i * 1.6) * .3, i * 1.6, (i % 2 ? 1 : -1) * .35); }
   scene.add(g); return g;
 }
 await document.fonts.load('58px Jua').catch(() => {});
 const carrots = PLOTS.map(([x, z], i) => {
-  add(scene, sphere(1.25, 24, 12), 0x8a5a3a, [x, 0, z], [1.25, .2, 1.05]);
+  add(scene, sphere(1.25, 32, 16), 0xa78155, [x, -.02, z], [1.18, .19, 1]);
+  for(let row=0;row<5;row++) {
+    const ridge=add(scene,new THREE.CapsuleGeometry(.11,1.65,4,12),0x926d48,[x,.16,z+(row-2)*.37]);ridge.rotation.z=Math.PI/2;
+  }
+  for(let k=0;k<10;k++){const a=k/10*Math.PI*2;add(scene,sphere(.07,8,6),0xc5a373,[x+Math.cos(a)*1.35,.12,z+Math.sin(a)*1.05],[1,.6,1]);}
   for (let k = 0; k < 4; k++) { const sx = x + (k - 1.5) * .55, sz = z + (k % 2 ? .65 : -.65); add(scene, sphere(.06, 6, 4), 0x6dbb55, [sx, .26, sz], [1, 2.4, .6]); }
   sign(SERVICES[i].sign, x + 1.3, z + 1.25);
-  const c = makeCarrot(SERVICES[i].color, i === 2); c.position.set(x, .26, z);
+  const c = makeCarrot(SERVICES[i].color, i === 2); c.scale.setScalar(1.55); c.position.set(x, .26, z);
   const hole = add(scene, new THREE.CircleGeometry(.22, 14), 0x4a2e1c, [x, .255, z]); hole.rotation.x = -Math.PI / 2; hole.visible = false;
   return {mesh: c, home: new THREE.Vector3(x, .26, z), hole, service: SERVICES[i], done: false, grow: 1};
 });
 const hitBoxes = carrots.map((c, i) => { const h = new THREE.Mesh(sphere(.9, 8, 6), new THREE.MeshBasicMaterial({visible: false})); h.position.copy(c.home); h.userData.i = i; scene.add(h); return h; });
 const arrow = add(scene, new THREE.ConeGeometry(.16, .32, 4), 0xffd45c); arrow.rotation.x = Math.PI; arrow.castShadow = false;
 
+// Project semantic hit targets onto the crops for pointer and keyboard access.
+const cropButtons = carrots.map((c,i) => {
+  const button=document.createElement('button');button.className='crop-target';button.hidden=true;
+  button.setAttribute('aria-label',(i===2?'황금 당근':SERVICES[i].name+' 당근')+' 수확하기');
+  button.addEventListener('click',()=>{
+    if(state!=='play') return;
+    ensureAudio(); pending=c;
+    const d=player.position.clone().sub(c.home).setY(0);if(d.length()<.01)d.set(0,0,1);
+    target=c.home.clone().add(d.setLength(1.05)).setY(0);canvas.focus();
+  });
+  document.body.append(button);return button;
+});
+const projectedCrop=new THREE.Vector3();
 // ---------- player (chibi farmer) ----------
 const player = new THREE.Group(), body = new THREE.Group(); player.add(body); scene.add(player);
-player.position.set(0, 0, 6);
+player.position.set(0, 0, 2.7); player.scale.setScalar(1.35);
 const SKIN = 0xffdcc0;
-add(body, new THREE.CapsuleGeometry(.32, .3, 6, 12), 0x6f9fd8, [0, .62, 0]);
-add(body, new THREE.BoxGeometry(.4, .3, .1), 0x6f9fd8, [0, .7, .28]);
-add(body, sphere(.42, 24, 16), SKIN, [0, 1.25, 0]);
+add(body, new THREE.CapsuleGeometry(.32, .3, 6, 12), 0x719b8c, [0, .62, 0]);
+add(body, new THREE.BoxGeometry(.4, .3, .1), 0x719b8c, [0, .7, .28]);
+add(body, sphere(.48, 32, 24), SKIN, [0, 1.25, 0]);
 [-1, 1].forEach(s => {
-  add(body, sphere(.065, 10, 8), 0x2b2118, [s * .15, 1.27, .38], [1, 1.5, .6]);
-  add(body, sphere(.06, 10, 8), 0xff9e9e, [s * .25, 1.15, .33], [1, .6, .4]).castShadow = false;
+  add(body, sphere(.065, 10, 8), 0x2b2118, [s * .17, 1.27, .435], [1, 1.5, .6]);
+  add(body, sphere(.06, 10, 8), 0xff9e9e, [s * .28, 1.15, .39], [1, .6, .4]).castShadow = false;
 });
+// Shirt, overall straps, buttons, hair, ears and a tiny nose.
+add(body, sphere(.3), 0xfff4d4, [0,.86,0], [1.15,.7,.9]);
+add(body, new THREE.BoxGeometry(.39,.34,.11), 0x719b8c, [0,.72,.28]);
+for (const side of [-1,1]) {
+  add(body, new THREE.BoxGeometry(.075,.33,.06), 0x719b8c, [side*.18,.89,.25]);
+  add(body, sphere(.027), 0xf7d77e, [side*.16,.82,.35]);
+  add(body, sphere(.095), SKIN, [side*.46,1.25,0]);
+  add(body, sphere(.018), 0xffffff, [side*.17-.015,1.3,.47]);
+}
+add(body, sphere(.065), 0xefbb93, [0,1.19,.465]);
+// Hair in soft parts: rounded crown and back, a five-tuft fringe, side locks and a nape tuft.
+const HAIR=0x6b4630, hairMat=mat(HAIR,{side:THREE.DoubleSide});
+add(body,new THREE.SphereGeometry(.505,40,24,0,Math.PI*2,0,1.12),hairMat,[0,1.25,0]);                 // crown
+add(body,new THREE.SphereGeometry(.505,40,24,Math.PI*.82,Math.PI*1.36,0,2.05),hairMat,[0,1.25,0]);   // sides + back
+[[-.95,.12],[-.48,.135],[0,.14],[.48,.13],[.95,.115]].forEach(([a,r],i)=>{                           // fringe
+  const t=add(body,sphere(r,16,12),HAIR,[Math.sin(a)*.43,1.5-Math.abs(a)*.07-(i%2)*.025,Math.cos(a)*.43],[1.05,.8,.62]);
+  t.rotation.set(-.35,a,(i-2)*-.12);
+});
+for(const side of [-1,1]){                                                                          // side locks
+  const l=add(body,sphere(.12,16,12),HAIR,[side*.4,1.17,.16],[.62,1.25,.7]);l.rotation.z=side*.18;
+}
+add(body,sphere(.2,16,12),HAIR,[0,1.02,-.34],[1.5,.75,.9]);                                         // nape
 const hat = new THREE.Group(); hat.position.set(0, 1.6, -.1); hat.rotation.x = -.38; body.add(hat);
 add(hat, new THREE.CylinderGeometry(.62, .62, .04, 24), 0xf2d27a);
 add(hat, new THREE.CylinderGeometry(.3, .37, .3, 20), 0xf2d27a, [0, .15, 0]);
@@ -256,13 +361,51 @@ function burst(pos, n, color, speed, life, size) {
 }
 
 // ---------- audio ----------
-let ac = null, muted = false;
+let ac = null, muted = false, master = null, musicBus = null, musicTimer = null;
+let nextBeat = 0, musicStep = 0;
+// Original 16-bar garden waltz: soft plucked keys, warm bass and sparse bell notes.
+// Generated locally; no audio downloads, tracking or third-party recordings.
+const beatSeconds = 60 / 84;
+const harmony = [[48,52,55,59],[45,48,52,55],[53,57,60,64],[43,47,50,55]];
+const melody = [76,null,79, 74,72,null, 71,null,67, 69,72,null,
+  76,null,72, 71,69,null, 67,null,64, 67,69,null,
+  72,null,76, 77,76,null, 72,null,69, 67,65,null,
+  71,null,74, 72,71,null, 67,null,69, 71,72,null];
+function musicNote(midi, at, duration, volume, type='triangle') {
+  const oscillator=ac.createOscillator(), envelope=ac.createGain();
+  oscillator.type=type; oscillator.frequency.value=440*Math.pow(2,(midi-69)/12);
+  envelope.gain.setValueAtTime(0,at);
+  envelope.gain.linearRampToValueAtTime(volume,at+.025);
+  envelope.gain.exponentialRampToValueAtTime(.0001,at+duration);
+  oscillator.connect(envelope).connect(musicBus);
+  oscillator.start(at); oscillator.stop(at+duration+.05);
+  oscillator.onended=()=>{oscillator.disconnect();envelope.disconnect();};
+}
+function scheduleMusic() {
+  if(!ac || ac.state!=='running' || document.hidden) return;
+  if(nextBeat<ac.currentTime) nextBeat=ac.currentTime+.06;
+  while(nextBeat<ac.currentTime+.18) {
+    const beat=musicStep%3, chord=harmony[Math.floor(musicStep/12)%4];
+    if(beat===0) musicNote(chord[0]-12,nextBeat,1.6,.13,'sine');
+    musicNote(chord[beat===0?1:beat===1?2:3],nextBeat,.85,.065);
+    const note=melody[musicStep%melody.length];
+    if(note!==null) musicNote(note,nextBeat,.95,.075,'sine');
+    nextBeat+=beatSeconds; musicStep++;
+  }
+}
+function updateSoundButton() {
+  const button=$('#mute');button.textContent=muted?'♫ OFF':'♫ ON';
+  button.setAttribute('aria-pressed',String(muted));
+  button.setAttribute('aria-label',muted?'배경음과 효과음 켜기':'배경음과 효과음 끄기');
+}
+
 function tone(f, t0, dur, type = 'triangle', vol = .14, f2) {
   if (!ac || muted) return;
   const t = ac.currentTime + t0, o = ac.createOscillator(), g = ac.createGain();
   o.type = type; o.frequency.setValueAtTime(f, t); if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur);
   g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + dur);
-  o.connect(g).connect(ac.destination); o.start(t); o.stop(t + dur);
+  o.connect(g).connect(master); o.start(t); o.stop(t + dur);
+  o.onended=()=>{o.disconnect();g.disconnect();};
 }
 const sfx = {
   tug: () => tone(140, 0, .07, 'square', .03),
@@ -270,14 +413,23 @@ const sfx = {
   fanfare: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, .1 + i * .1, i === 3 ? .5 : .22)),
   step: () => tone(rand(500, 700), 0, .03, 'sine', .015),
 };
-$('#mute').onclick = e => { muted = !muted; e.currentTarget.textContent = muted ? '🔈' : '🔊'; e.currentTarget.setAttribute('aria-pressed', muted); };
-$('#mute').setAttribute('aria-label', '소리 끄기/켜기');
+$('#mute').onclick = () => {
+  muted=!muted; ensureAudio();
+  if(master) master.gain.setTargetAtTime(muted?0:.65,ac.currentTime,.06);
+  updateSoundButton();
+};
+updateSoundButton();
+document.addEventListener('visibilitychange',()=>{
+  if(!ac) return;
+  if(document.hidden) ac.suspend().catch(()=>{});
+  else ac.resume().then(scheduleMusic).catch(()=>{});
+});
 
 // ---------- input ----------
 const keys = new Set(); let target = null, pending = null;
 let state = 'intro', pull = null, collected = 0;
 addEventListener('keydown', e => {
-  if (state !== 'play') return;
+  if (state !== 'play' || e.target.closest('button, a, dialog')) return;
   if (e.code === 'Space' || e.code === 'KeyE') { e.preventDefault(); tryPull(); return; }
   if (/^(Arrow|Key[WASD])/.test(e.code)) { e.preventDefault(); keys.add(e.code); target = pending = null; }
 });
@@ -307,15 +459,31 @@ const nearest = () => {
 };
 function tryPull(c = nearest()) {
   if (!c || state !== 'play') return;
+  ensureAudio();
   state = 'pull'; target = pending = null; keys.clear(); $('#prompt').hidden = true;
   pull = {c, t: 0, from: null, popped: false, shown: false};
 }
 
 // ---------- dialogs ----------
-function ensureAudio() { if (!ac) { try { ac = new AudioContext(); } catch {} } else if (ac.state === 'suspended') ac.resume(); }
+function ensureAudio() {
+  if(!ac) {
+    try {
+      ac=new AudioContext();master=ac.createGain();master.gain.value=muted?0:.65;
+      master.connect(ac.destination);
+      musicBus=ac.createBiquadFilter();musicBus.type='lowpass';musicBus.frequency.value=1800;
+      musicBus.connect(master);
+      nextBeat=ac.currentTime+.08;
+      musicTimer=setInterval(scheduleMusic,100);
+    } catch { return; }
+  }
+  if(ac.state==='suspended') ac.resume().then(scheduleMusic).catch(()=>{});
+  else scheduleMusic();
+}
+addEventListener('pagehide',()=>{if(musicTimer)clearInterval(musicTimer);musicTimer=null;if(ac)ac.suspend().catch(()=>{});});
+addEventListener('pageshow',e=>{if(e.persisted && ac){musicTimer=setInterval(scheduleMusic,100);ac.resume().then(scheduleMusic).catch(()=>{});}});
 const intro = $('#intro'), card = $('#card');
 intro.addEventListener('cancel', e => e.preventDefault());
-$('#start').onclick = () => { ensureAudio(); intro.close(); state = 'play'; canvas.focus?.(); };
+$('#start').onclick = () => { ensureAudio(); intro.close(); state = 'play'; canvas.focus(); $('.journal').classList.add('hidden'); };
 
 function showCard(s) {
   const pts = s.points.map(p => `<li>${p}</li>`).join('');
@@ -323,13 +491,13 @@ function showCard(s) {
     ${s.img ? `<div class="art" style="background-image:url('${s.img}')" role="img" aria-label="${s.name} 캐릭터"></div>` : '<div class="art seed" aria-hidden="true">🌱</div>'}
     <p class="note">${s.tag}</p><h2>${s.title}</h2><p>${s.desc}</p>${pts ? `<ul>${pts}</ul>` : ''}${s.note ? `<p class="note">${s.note}</p>` : ''}
     <div class="actions"><a class="btn" href="${s.cta[1]}" ${s.cta[1].startsWith('http') ? 'target="_blank" rel="noopener"' : ''}>${s.cta[0]}</a><button class="btn ghost" data-close>계속 농사짓기</button></div>`;
-  card.showModal();
+  keys.clear(); card.showModal();
 }
 function showDone() {
   $('#card-body').innerHTML = `<span class="tag">🎉 수확 완료</span><div class="art seed" aria-hidden="true">🧺</div>
     <h2>밭을 모두<br>수확했어요!</h2><p>작은 아이디어를 일상의 쓸모로. Digital Farmers는 오늘도 다음 씨앗을 가꾸고 있어요.</p>
     <div class="actions"><button class="btn" data-replant>다시 심기</button><a class="btn ghost" href="./">홈으로</a></div>`;
-  card.showModal();
+  keys.clear(); card.showModal();
 }
 card.addEventListener('click', e => {
   if (e.target.closest('[data-close]')) card.close();
@@ -341,7 +509,7 @@ card.addEventListener('close', () => {
     collected++; $('#count').textContent = collected; pull = null;
     if (collected === carrots.length) { setTimeout(showDone, 350); return; }
   }
-  state = 'play';
+  state = 'play'; canvas.focus();
 });
 
 // ---------- loop ----------
@@ -352,8 +520,8 @@ const lerpAngle = (a, b, t) => a + (((b - a + Math.PI) % (Math.PI * 2) + Math.PI
 
 function resize() {
   renderer.setSize(innerWidth, innerHeight, false);
-  camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
-  const far = innerWidth / innerHeight < .8; scene.fog.near = far ? 32 : 24; scene.fog.far = far ? 58 : 46;
+  camera.aspect = innerWidth / innerHeight; camera.fov = camera.aspect < .8 ? 53 : 34; camera.updateProjectionMatrix();
+  const far = innerWidth / innerHeight < .8; scene.fog.near = 38; scene.fog.far = 70;
 }
 addEventListener('resize', resize); resize();
 
@@ -393,7 +561,7 @@ function update(dt, t) {
       if (tug && Math.sin(P.t * 34) > .97) sfx.tug();
     } else {
       if (!P.popped) { P.popped = true; P.from = c.mesh.position.clone(); sfx.pop(); burst(c.home, 4, 0x8a5a3a, 2.2, .5, .1); }
-      const k = Math.min(1, (P.t - 1.1) / .4), head = p.clone().setY(2.45);
+      const k = Math.min(1, (P.t - 1.1) / .4), head = p.clone().setY(3.35);
       c.mesh.position.lerpVectors(P.from, head, k); c.mesh.position.y += Math.sin(k * Math.PI) * 1.4;
       c.mesh.rotation.z = 0; c.mesh.rotation.y += dt * (k < 1 ? 18 : 2.5);
       aL = aR = -2.9 * Math.min(1, k * 1.5); sy = 1 + Math.sin(Math.min(1, k) * Math.PI) * .12;
@@ -406,7 +574,7 @@ function update(dt, t) {
 
   // carrots: regrow, idle wiggle, nearest arrow
   for (const c of carrots) {
-    if (c.grow < 1) { c.grow = Math.min(1, c.grow + dt * 1.6); c.mesh.scale.setScalar(Math.max(.01, ease(c.grow))); }
+    if (c.grow < 1) { c.grow = Math.min(1, c.grow + dt * 1.6); c.mesh.scale.setScalar(1.55 * Math.max(.01, ease(c.grow))); }
     else if (!c.done && pull?.c !== c) c.mesh.rotation.z = Math.sin(t * 2 + c.home.x) * .05;
   }
   const n = state === 'play' ? nearest() : null;
@@ -414,7 +582,7 @@ function update(dt, t) {
   if (n) arrow.position.set(n.home.x, 1.45 + Math.sin(t * 5) * .1, n.home.z), arrow.rotation.y = t * 2;
 
   // ambient
-  clouds.forEach((g, i) => { g.position.x += dt * (.3 + i * .05); if (g.position.x > 34) g.position.x = -34; });
+  clouds.forEach((g, i) => { g.position.x += (reducedMotion ? 0 : dt) * (.3 + i * .05); if (g.position.x > 34) g.position.x = -34; });
   flies.forEach(({g, l, r, o}) => {
     g.position.set(Math.sin(t * .4 + o) * 7, 1 + Math.sin(t * 1.3 + o) * .4, Math.cos(t * .3 + o) * 5 + 1);
     g.rotation.y = t * .4 + o; l.rotation.y = Math.sin(t * 18) * 1.1; r.rotation.y = -l.rotation.y;
@@ -427,18 +595,25 @@ function update(dt, t) {
 
   // camera: high, gentle follow
   const portrait = innerWidth / innerHeight < .8;
-  camPos.set(p.x * (portrait ? .6 : .85), portrait ? 17 : 10, p.z + (portrait ? 21 : 12.5));
-  look.set(p.x * (portrait ? .6 : .85), .8, p.z - 1.2);
-  if (!camInit) { camera.position.copy(camPos).add(new THREE.Vector3(0, 6, 6)); camInit = true; }
-  camera.position.lerp(camPos, Math.min(1, dt * 3)); camera.lookAt(look);
-  sun.position.set(p.x + 8, 16, p.z + 6); sun.target.position.set(p.x, 0, p.z);
+  camPos.set(p.x * .25, portrait ? 18 : 13.5, 18.5 + p.z * .25);
+  look.set(p.x * .25, 0, portrait ? .2 : -1.2);
+  if (!camInit) { camera.position.copy(camPos); camInit = true; }
+  camera.position.lerp(camPos, reducedMotion ? 1 : Math.min(1, dt * 2)); camera.lookAt(look);
+  sun.position.set(-5, 16, 9); sun.target.position.set(0, 0, -2);
 }
 
 renderer.setAnimationLoop(() => {
   const dt = Math.min(clock.getDelta(), .05);
-  update(dt, clock.elapsedTime);
+  update(dt, reducedMotion ? 0 : clock.elapsedTime);
   renderer.render(scene, camera);
+  cropButtons.forEach((button,i)=>{
+    button.hidden=state!=='play'||carrots[i].done||carrots[i].grow<1;
+    projectedCrop.copy(carrots[i].home).add(new THREE.Vector3(0,.4,0)).project(camera);
+    button.style.left=((projectedCrop.x+1)*innerWidth/2)+'px';
+    button.style.top=((-projectedCrop.y+1)*innerHeight/2)+'px';
+  });
 });
+$('#loading').remove();
 canvas.classList.add('ready');
 intro.showModal();
 </script>
