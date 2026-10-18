@@ -359,7 +359,7 @@ function sweptLock(root,tip,end,width,color) {
   const material=mat(color,{side:THREE.DoubleSide,roughness:.68});
   hairPatch(24,12,(v,u)=>{
     const flow=v*v*(3-2*v),center=THREE.MathUtils.lerp(root,tip,flow);
-    const taper=Math.pow(Math.max(.001,1-v),.48);
+    const taper=(.72+.28*(1-v))*Math.sqrt(Math.max(0,1-Math.pow(v,5)));
     const phi=center+(u-.5)*width*taper;
     const theta=.7+(end-.7)*v;
     const volume=.012+.025*Math.sin(u*Math.PI)*Math.sin(v*Math.PI);
