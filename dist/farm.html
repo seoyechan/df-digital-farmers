@@ -330,18 +330,20 @@ for (const side of [-1,1]) {
   add(body, sphere(.018), 0xffffff, [side*.17-.015,1.3,.47]);
 }
 add(body, sphere(.065), 0xefbb93, [0,1.19,.465]);
-// Hair in soft parts: rounded crown and back, a five-tuft fringe, side locks and a nape tuft.
-const HAIR=0x6b4630, hairMat=mat(HAIR,{side:THREE.DoubleSide});
-add(body,new THREE.SphereGeometry(.505,40,24,0,Math.PI*2,0,1.12),hairMat,[0,1.25,0]);                 // crown
-add(body,new THREE.SphereGeometry(.505,40,24,Math.PI*.82,Math.PI*1.36,0,2.05),hairMat,[0,1.25,0]);   // sides + back
-[[-.95,.12],[-.48,.135],[0,.14],[.48,.13],[.95,.115]].forEach(([a,r],i)=>{                           // fringe
-  const t=add(body,sphere(r,16,12),HAIR,[Math.sin(a)*.43,1.5-Math.abs(a)*.07-(i%2)*.025,Math.cos(a)*.43],[1.05,.8,.62]);
-  t.rotation.set(-.35,a,(i-2)*-.12);
-});
-for(const side of [-1,1]){                                                                          // side locks
-  const l=add(body,sphere(.12,16,12),HAIR,[side*.4,1.17,.16],[.62,1.25,.7]);l.rotation.z=side*.18;
-}
-add(body,sphere(.2,16,12),HAIR,[0,1.02,-.34],[1.5,.75,.9]);                                         // nape
+// Short cut with cowlicks: snug crown, short back, pointed fringe and a few strands poking out under the hat.
+const HAIR=0x5a3a26, hairMat=mat(HAIR,{side:THREE.DoubleSide});
+add(body,new THREE.SphereGeometry(.5,40,24,0,Math.PI*2,0,1.05),hairMat,[0,1.25,0]);               // crown
+add(body,new THREE.SphereGeometry(.5,40,24,Math.PI*.92,Math.PI*1.16,0,1.78),hairMat,[0,1.25,0]);  // short sides + back
+// spike(angle around head, height, length, outward tilt, radius): a cone anchored on the hair surface
+const spike=(a,y,len,tilt,r=.07,roll=0)=>{
+  const g=new THREE.Group(); g.position.set(0,y,0); g.rotation.y=a; body.add(g);
+  const c=add(g,new THREE.ConeGeometry(r,len,10),HAIR,[0,0,.44]); c.geometry.translate(0,len/2,0);
+  c.rotation.set(tilt,0,roll); return c;
+};
+[[-.62,1.5,.2],[-.22,1.53,.24],[.2,1.52,.21],[.58,1.49,.17]].forEach(([a,y,l],i)=>spike(a,y,l,Math.PI*.78,.085,(i-1.5)*.15)); // fringe, pointing down
+spike(-.38,1.6,.26,.55,.06,-.5);                                                                   // front cowlick
+for(const side of [-1,1]) spike(side*Math.PI/2,1.42,.16,Math.PI*.62,.06);                         // sideburns above the ears
+[[Math.PI-.5,.24],[Math.PI,.3],[Math.PI+.45,.22]].forEach(([a,l])=>spike(a,1.45,l,1.05,.07));     // back cowlicks
 const hat = new THREE.Group(); hat.position.set(0, 1.6, -.1); hat.rotation.x = -.38; body.add(hat);
 add(hat, new THREE.CylinderGeometry(.62, .62, .04, 24), 0xf2d27a);
 add(hat, new THREE.CylinderGeometry(.3, .37, .3, 20), 0xf2d27a, [0, .15, 0]);
