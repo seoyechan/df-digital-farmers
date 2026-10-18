@@ -10,12 +10,11 @@ DFsolution의 브랜드 레퍼런스 홈페이지. 제안 표기: DF · Digital 
 
 ## 디자인
 
-- 럭셔리 에디토리얼 방향의 디지털 프로덕트 스튜디오.
-- DESIGN_VARIANCE 7 / MOTION_INTENSITY 5 / VISUAL_DENSITY 3.
-- Black & Ivory 팔레트: 따뜻한 아이보리 + 잉크 블랙. 시스템/수동 라이트·다크 테마.
-- Georgia의 세리프와 한국어 시스템 산세리프. 직각 이미지, 얇은 구분선, 비대칭 서비스 배치.
-- 진입 모션은 정보 순서를 드러내고, 호버는 클릭 가능성을 알립니다. reduced-motion 지원.
-- 레이어: 콘텐츠 기본, skip link 3, 모달은 브라우저 top layer.
+- Apple HIG 기반 점검(apple-design 스킬) 후 2026-10-18 전면 개편.
+- 시그니처: 스크롤하면 씨앗이 싹을 틔우는 히어로(SVG). 성장 단계에 맞춰 서비스 태그가 열립니다.
+- 색: 강조색은 새싹 초록 하나(행동·시그니처 전용). 라이트·다크는 기기 설정을 따르고 별도 테마 버튼은 두지 않습니다. 본문 대비 6:1 이상.
+- 글꼴: Pretendard 한 가족(jsDelivr CDN), 본문 17px. 로고 "Df."만 Georgia.
+- 모션: 히어로 성장, 단어별 하이라이트, 타일 확대·패럴랙스, 단계 진행선, 진입 리빌. reduced-motion에서는 모두 끄고 완성 상태로 보여줍니다.
 
 ## 확인된 연결과 남은 운영 정보
 
@@ -27,6 +26,5 @@ DFsolution의 브랜드 레퍼런스 홈페이지. 제안 표기: DF · Digital 
 
 ## 이미지
 
-- `dist/assets/cultivate.jpg`: 내장 image_gen 도구 생성, 웹용 JPEG로 최적화.
-- 생성 프롬프트: “Use case: photorealistic-natural. Asset type: wide homepage hero photograph for a luxury editorial digital product studio called Digital Farmers. Create an exquisite real still-life photograph of a slender young olive branch with very few dark green leaves emerging from a small irregular charcoal stone vessel, resting on a monolithic pale limestone plinth. Warm ivory plaster studio background, dramatic but soft late-afternoon light from the left, elegant long shadow toward the right, fine natural stone texture and delicate film grain. Botanical, architectural, contemplative, extremely refined Italian design magazine art direction. Landscape 3:2 composition. Subject in the central-right half, substantial uncluttered background; show full branch and plinth. Earthy warm ivory, muted olive, brown-black. No text, no logos, no interface, no border. Photo for an independent digital studio with the metaphor of cultivating useful ideas.”
+- `dist/assets/og.png`: 공유 미리보기 이미지. 히어로를 1200×630으로 캡처.
 - `dist/assets/loopang.png`, `dist/assets/ondo.png`: 사용자 기존 프로젝트의 캐릭터 이미지.
