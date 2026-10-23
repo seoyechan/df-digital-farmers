@@ -73,9 +73,9 @@ dialog::backdrop{background:#233d3225;backdrop-filter:blur(3px)}
 <header class="hud">
   <a class="pill" href="./">← 홈</a>
   <span class="pill title">작은 디지털 농장<small>DIGITAL FARMERS</small></span>
-  <span class="pill count" aria-live="polite">수확 바구니 <b id="count">0</b>/3</span>
+  <span class="pill count" aria-live="polite">수확 바구니 <b id="count">0</b>/4</span>
   <button class="pill" id="mute" aria-pressed="false">🔊</button>
-</header><aside class="journal"><small>오늘의 작은 할 일</small><p>당근 세 개에 담긴<br><span>우리의 서비스</span>를 발견해요.</p></aside>
+</header><aside class="journal"><small>오늘의 작은 할 일</small><p>당근 네 개에 담긴<br><span>우리의 서비스</span>를 발견해요.</p></aside>
 <div class="prompt" id="prompt" hidden><button class="btn" id="pull">🥕 당근 뽑기 <kbd>Space</kbd></button></div>
 <p class="hint"><span class="pc">이동 <b>WASD·방향키</b> 또는 <b>클릭</b> · 뽑기 <b>Space</b></span><span class="touch">당근이나 땅을 톡 눌러 이동해요</span></p>
 
@@ -104,7 +104,10 @@ const SERVICES = [
   {sign:'ondo°', name:'ondo', obj:'ondo를', tag:'날씨를 일상의 언어로', img:'assets/ondo.png', color:0xff8a2a,
    title:'오늘의 날씨를,<br>한눈에 입다.', desc:'기온, 비, 바람에 맞춰 달라지는 캐릭터와 옷차림으로 오늘의 외출을 준비해 보세요.',
    points:['캐릭터로 보는 날씨','날씨에 맞춘 옷 추천','코디 보관 옷장'], note:'공개 서비스 링크를 준비 중이에요.', cta:['ondo 문의하기 ↗','mailto:digfarmcom@gmail.com?subject=ondo%20%EC%84%9C%EB%B9%84%EC%8A%A4%20%EB%AC%B8%EC%9D%98']},
-  {sign:'???', name:'황금 당근', obj:'황금 당근을', tag:'아직 자라는 중', img:null, color:0xffc83d,
+  {sign:'오락실', name:'오락실 당근', obj:'오락실 당근을', tag:'우리가 만드는 웹게임', img:'arcade/thumbs/night-owl-mart.jpg', cover:true, alt:'올빼미 편의점 게임 화면', color:0x9b6bff, glow:0x2a1060,
+   title:'설치 없이,<br>지금 바로 한 판.', desc:'Digital Farmers는 브라우저에서 바로 즐기는 웹게임도 만들어요. 첫 게임 「올빼미 편의점」이 오락실에서 기다리고 있어요.',
+   points:['설치 없는 웹게임','모바일·PC 모두 플레이','새 게임 계속 추가'], cta:['오락실 바로가기 →','arcade/']},
+  {sign:'???', name:'황금 당근', obj:'황금 당근을', tag:'아직 자라는 중', img:null, color:0xffc83d, glow:0x664400,
    title:'다음 씨앗을<br>함께 심어요.', desc:'디지털 파머의 밭에는 아직 자라고 있는 아이디어가 많아요. 함께 키우고 싶은 생각이 있다면 들려주세요.',
    points:[], cta:['digfarmcom@gmail.com ↗','mailto:digfarmcom@gmail.com']},
 ];
@@ -154,7 +157,7 @@ const ground = add(scene, new THREE.CircleGeometry(70, 64), 0x79a65d);
 ground.rotation.x = -Math.PI / 2; ground.castShadow = false;
 
 const colliders = []; // {x,z,r}
-const PLOTS = [[-3.9, -1], [0, -2], [3.9, -1]];
+const PLOTS = [[-5.4, -1], [-1.8, -2], [1.8, -2], [5.4, -1]];
 const nearPlotOrPath = (x, z) => PLOTS.some(([px, pz]) => Math.hypot(x - px, z - pz) < 2.2) || (Math.abs(x) < 1.2 && z > -1 && z < 8);
 
 function tree(x, z, s = 1) {
@@ -273,9 +276,9 @@ function sign(text, x, z) {
 }
 
 // ---------- carrots ----------
-function makeCarrot(color, golden) {
+function makeCarrot(color, glow) {
   const g = new THREE.Group();
-  const root = add(g, new THREE.ConeGeometry(.26, .85, 24), golden ? mat(color, {emissive: 0x664400}) : color, [0, -.34, 0]);
+  const root = add(g, new THREE.ConeGeometry(.26, .85, 24), glow ? mat(color, {emissive: glow}) : color, [0, -.34, 0]);
   root.rotation.x = Math.PI;
   for (let i = 0; i < 4; i++) { const lf = add(g, sphere(.1, 16, 12), 0x438e52, [0, .22, 0], [1, 4, .5]); lf.rotation.set(Math.sin(i * 1.6) * .3, i * 1.6, (i % 2 ? 1 : -1) * .35); }
   scene.add(g); return g;
@@ -289,7 +292,7 @@ const carrots = PLOTS.map(([x, z], i) => {
   for(let k=0;k<10;k++){const a=k/10*Math.PI*2;add(scene,sphere(.07,8,6),0xc5a373,[x+Math.cos(a)*1.35,.12,z+Math.sin(a)*1.05],[1,.6,1]);}
   for (let k = 0; k < 4; k++) { const sx = x + (k - 1.5) * .55, sz = z + (k % 2 ? .65 : -.65); add(scene, sphere(.06, 6, 4), 0x6dbb55, [sx, .26, sz], [1, 2.4, .6]); }
   sign(SERVICES[i].sign, x + 1.3, z + 1.25);
-  const c = makeCarrot(SERVICES[i].color, i === 2); c.scale.setScalar(1.55); c.position.set(x, .26, z);
+  const c = makeCarrot(SERVICES[i].color, SERVICES[i].glow); c.scale.setScalar(1.55); c.position.set(x, .26, z);
   const hole = add(scene, new THREE.CircleGeometry(.22, 14), 0x4a2e1c, [x, .255, z]); hole.rotation.x = -Math.PI / 2; hole.visible = false;
   return {mesh: c, home: new THREE.Vector3(x, .26, z), hole, service: SERVICES[i], done: false, grow: 1};
 });
@@ -299,7 +302,7 @@ const arrow = add(scene, new THREE.ConeGeometry(.16, .32, 4), 0xffd45c); arrow.r
 // Project semantic hit targets onto the crops for pointer and keyboard access.
 const cropButtons = carrots.map((c,i) => {
   const button=document.createElement('button');button.className='crop-target';button.hidden=true;
-  button.setAttribute('aria-label',(i===2?'황금 당근':SERVICES[i].name+' 당근')+' 수확하기');
+  button.setAttribute('aria-label',(SERVICES[i].name.endsWith('당근')?SERVICES[i].name:SERVICES[i].name+' 당근')+' 수확하기');
   button.addEventListener('click',()=>{
     if(state!=='play') return;
     ensureAudio(); pending=c;
@@ -524,7 +527,7 @@ $('#start').onclick = () => { ensureAudio(); intro.close(); state = 'play'; canv
 function showCard(s) {
   const pts = s.points.map(p => `<li>${p}</li>`).join('');
   $('#card-body').innerHTML = `<span class="tag">🥕 ${s.obj} 수확했다!</span>
-    ${s.img ? `<div class="art" style="background-image:url('${s.img}')" role="img" aria-label="${s.name} 캐릭터"></div>` : '<div class="art seed" aria-hidden="true">🌱</div>'}
+    ${s.img ? `<div class="art" style="background-image:url('${s.img}')${s.cover ? ';background-size:cover' : ''}" role="img" aria-label="${s.alt || s.name + ' 캐릭터'}"></div>` : '<div class="art seed" aria-hidden="true">🌱</div>'}
     <p class="note">${s.tag}</p><h2>${s.title}</h2><p>${s.desc}</p>${pts ? `<ul>${pts}</ul>` : ''}${s.note ? `<p class="note">${s.note}</p>` : ''}
     <div class="actions"><a class="btn" href="${s.cta[1]}" ${s.cta[1].startsWith('http') ? 'target="_blank" rel="noopener"' : ''}>${s.cta[0]}</a><button class="btn ghost" data-close>계속 농사짓기</button></div>`;
   keys.clear(); card.showModal();
