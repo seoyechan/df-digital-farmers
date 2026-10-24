@@ -1,6 +1,6 @@
 // Google Analytics 4 for cochan.co.kr. Every page loads this one file.
 // Runs only on the live domain, so local previews don't send test traffic.
-const GA_ID = 'G-XXXXXXXXXX'; // TODO: replace with the real GA4 measurement ID
+const GA_ID = 'G-36ZBBDDE2M'; // GA4 property "Digital Farmers 홈페이지", web stream cochan.co.kr
 
 window.dataLayer = window.dataLayer || [];
 window.gtag = function () { dataLayer.push(arguments); };
