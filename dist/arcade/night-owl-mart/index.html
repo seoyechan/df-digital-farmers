@@ -1,6 +1,10 @@
-<!doctype html><html lang="ko"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><script src="/ga.js"></script></head><body>
-<title>올빼미 편의점</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>올빼미 편의점 · Night Owl Mart</title>
+<script src="/ga.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=DotGothic16&family=IBM+Plex+Sans+KR:wght@400;600;700&display=swap">
@@ -142,8 +146,11 @@ h2{margin:0;font:400 28px/1.1 var(--display);color:var(--owl);text-wrap:balance}
 .up.goal h3{color:var(--owl)}
 .up.goal .gbar{grid-column:1}
 .endov{align-items:flex-end;justify-content:center;background:linear-gradient(180deg,rgba(9,13,22,0) 45%,rgba(9,13,22,.7))}
-@media (max-aspect-ratio:11/10){.endcard{padding:16px 18px;gap:12px}.endcard h2{font-size:21px}.endcard .tagline{display:none}}
-@media (min-aspect-ratio:11/10){.endov{align-items:center;justify-content:flex-end;background:linear-gradient(90deg,rgba(9,13,22,0) 55%,rgba(9,13,22,.6))}.endcard{max-width:360px}}
+body:not(.wide) .endcard{padding:16px 18px;gap:12px}
+body:not(.wide) .endcard h2{font-size:21px}
+body:not(.wide) .endcard .tagline{display:none}
+body.wide .endov{align-items:center;justify-content:flex-end;background:linear-gradient(90deg,rgba(9,13,22,0) 55%,rgba(9,13,22,.6))}
+body.wide .endcard{max-width:360px}
 .endcard{max-width:420px;animation:endIn .6s ease-out both;animation-delay:2.6s}
 .endcard h2{font-size:26px}
 .endcard h2,.endcard p{word-break:keep-all;overflow-wrap:break-word}
@@ -151,26 +158,28 @@ h2{margin:0;font:400 28px/1.1 var(--display);color:var(--owl);text-wrap:balance}
 @media (prefers-reduced-motion:reduce){.endcard{animation:none}}
 
 /* short desktop iframes (e.g. 907x510, 821x462): keep every menu button on screen */
-@media (max-height:640px) and (min-aspect-ratio:11/10){
-  .overlay{padding:8px}
-  .card{padding:14px 16px;gap:10px}
-  .sign{padding:8px 10px;gap:2px}.sign h1{font-size:30px}.sign .sub{font-size:11px}
-  .tagline{font-size:12.5px;line-height:1.4}
-  .how{gap:5px}.how li{font-size:13px}.how kbd{font-size:13px;padding:2px 0}
-  .btn{padding:9px 14px;font-size:16px}.btn.ghost{font-size:14px}
-  h2{font-size:22px}.lines{gap:4px}.lines div{font-size:13px}.lines .total{font-size:15px}
-}
-@media (max-height:540px) and (min-aspect-ratio:11/10){
-  #scrTitle .owl{display:none}
-  #scrTitle .tagline{display:none}
-}
+body.wide.short .overlay{padding:8px}
+body.wide.short .card{padding:14px 16px;gap:10px}
+body.wide.short .sign{padding:8px 10px;gap:2px}
+body.wide.short .sign h1{font-size:30px}
+body.wide.short .sign .sub{font-size:11px}
+body.wide.short .tagline{font-size:12.5px;line-height:1.4}
+body.wide.short .how{gap:5px}
+body.wide.short .how li{font-size:13px}
+body.wide.short .how kbd{font-size:13px;padding:2px 0}
+body.wide.short .btn{padding:9px 14px;font-size:16px}
+body.wide.short .btn.ghost{font-size:14px}
+body.wide.short h2{font-size:22px}
+body.wide.short .lines{gap:4px}
+body.wide.short .lines div{font-size:13px}
+body.wide.short .lines .total{font-size:15px}
+body.wide.vshort #scrTitle .owl{display:none}
+body.wide.vshort #scrTitle .tagline{display:none}
 .sumcol{display:flex;flex-direction:column;gap:inherit}
 .sumcol:empty{display:none}
-@media (max-height:640px) and (min-aspect-ratio:11/10){
-  #scrSum .card{max-width:780px;display:grid;grid-template-columns:1fr 1fr;column-gap:20px;align-items:start}
-  #scrSum h2{grid-column:1/-1}
-  #scrSum .sumcol{gap:10px}
-}
+body.wide.short #scrSum .card{max-width:780px;display:grid;grid-template-columns:1fr 1fr;column-gap:20px;align-items:start}
+body.wide.short #scrSum h2{grid-column:1/-1}
+body.wide.short #scrSum .sumcol{gap:10px}
 
 /* mobile: rating changes show as a short number in the HUD instead of toasts over the store */
 .rd{display:none;font-style:normal;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:0}
@@ -181,6 +190,22 @@ h2{margin:0;font:400 28px/1.1 var(--display);color:var(--owl);text-wrap:balance}
 /* portrait: tutorial hint gets its own strip under the store */
 .dangerbar.dock{border-radius:12px;padding:7px 12px;font-size:12px;line-height:1.35}
 .hint.dock{border-radius:12px;padding:7px 12px;font-size:12px;line-height:1.35;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+
+/* sideways view: lets a portrait phone (or one with rotation lock) play the wide layout */
+body.rot #app{position:fixed;top:0;transform:rotate(90deg);transform-origin:top left}
+#bRot svg{display:block;margin:auto}
+
+/* phones held sideways (about 390px tall): the in-game hints teach the controls, so the menu keeps only what is needed to start */
+body.wide.xshort .overlay{padding:6px}
+body.wide.xshort .card{padding:10px 14px;gap:7px}
+body.wide.xshort #scrTitle .how{display:none}
+body.wide.xshort .sign{padding:6px 10px}
+body.wide.xshort .sign h1{font-size:24px}
+body.wide.xshort .btn{padding:7px 12px;font-size:15px}
+body.wide.xshort .btn.ghost{font-size:13px}
+body.wide.xshort .endcard p{display:none}
+body.wide.xshort .endcard h2{font-size:20px}
+body.wide.xshort .endcard{gap:8px}
 </style>
 
 <div class="danger" id="danger" hidden aria-hidden="true"></div>
@@ -194,6 +219,7 @@ h2{margin:0;font:400 28px/1.1 var(--display);color:var(--owl);text-wrap:balance}
     <div class="seg stat"><span class="lbl"><span data-i18n="hudClean">청결</span> <em id="hCleanN">100%</em></span><div class="meter"><i id="hClean" style="width:100%"></i></div></div>
     <div class="seg stat"><span class="lbl" id="hRepL"><span data-i18n="hudRep">별점</span><i class="rd" id="hRepD"></i></span><b id="hRep" class="stars">★5.00</b></div>
     <div class="seg seg-btns">
+      <button class="iconbtn" id="bRot" aria-label="rotate" hidden><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2" transform="rotate(-90 12 12)"/><path d="M3 9a9 9 0 0 1 9-6"/><path d="M12 1l1 2-2 1"/></svg></button>
       <button class="iconbtn" id="bSound" aria-label="sound">♪</button>
       <button class="iconbtn" id="bPause" aria-label="pause"><span class="pz"><i></i><i></i></span></button>
     </div>
@@ -1724,12 +1750,54 @@ function frame(ts){
 
 /* ---------- sizing ---------- */
 let fitKey='';
-let MOB=false;
+let MOB=false, ROT=false;
+const TOUCH=window.matchMedia('(pointer:coarse)').matches||('ontouchstart' in window);
+/* move everything in a running shift from one layout to the other (phone turned mid-shift) */
+function freeSpot(x,y){
+  const rs=[L.counter,L.table].concat(L.shelves);
+  for(let k=0;k<3;k++){
+    for(const r of rs){ const m=22;
+      if(x>r.x-m&&x<r.x+r.w+m&&y>r.y-m&&y<r.y+r.h+m){
+        const d=[[x-(r.x-m),r.x-m-1,y],[r.x+r.w+m-x,r.x+r.w+m+1,y],[y-(r.y-m),x,r.y-m-1],[r.y+r.h+m-y,x,r.y+r.h+m+1]].sort((a,b)=>a[0]-b[0])[0];
+        x=d[1];y=d[2];
+      } }
+    x=Math.max(24,Math.min(L.W-24,x)); y=Math.max(44,Math.min(L.H-10,y));
+  }
+  return {x,y};
+}
+function relayout(o){
+  const map=(x,y)=>freeSpot(x/o.W*L.W,y/o.H*L.H);
+  const put=(e,p)=>{e.x=p.x;e.y=p.y;};
+  endPtr();
+  G.seats.forEach((st,i)=>{const s=L.table.seats[i]; st.x=s.x; st.y=s.y; st.cup=L.table.vertical?{x:L.table.x+22,y:s.y+6}:{x:s.x,y:L.table.y+22};});
+  for(const c of G.customers){
+    c.wp=null; c.bx=c.by=null; c.lx=null; c.still=0; c.direct=0;
+    if(c.y>o.H-4){ c.y=c.y-o.H+L.H; c.x=c.x/o.W*L.W; continue; }   // still outside the door
+    if(c.state==='queue'||c.state==='counter'){ put(c,L.queue(Math.max(0,G.queue.indexOf(c)))); }
+    else if(c.state==='pick'||c.state==='waitShelf'){ put(c,frontPoint(c)); }
+    else if(c.state==='eat'&&c.seat){ put(c,c.seat); }
+    else put(c,map(c.x,c.y));
+  }
+  for(const d of G.dirt){ let p=map(d.x,d.y); if(!validFloor(p.x,p.y)){ const f=L.floor; p={x:Math.max(f.x+10,Math.min(f.x+f.w-10,p.x)),y:Math.max(f.y+10,Math.min(f.y+f.h-10,p.y))}; } put(d,p); }
+  if(G.cat){ if(G.cat.state==='sit') put(G.cat,L.catSit); else if(G.cat.y<=o.H) put(G.cat,map(G.cat.x,G.cat.y)); }
+  G.robots.forEach((r,i)=>{ const od=r.dock; r.dock=L.docks[i]; if(Math.hypot(r.x-od.x,r.y-od.y)<8) put(r,r.dock); else put(r,map(r.x,r.y)); });
+  if(G.alba){ const a=G.alba; a.wp=null; a.lx=null; if(a.target) a.target=L.shelves.find(s=>s.id===a.target.id)||null; if(!a.target&&a.state!=='idle') a.state='idle';
+    if(a.state==='stock') put(a,a.target.front); else put(a,map(a.x,a.y)); }
+  G.floats=[]; G.parts=[];
+}
 function fit(){
-  const app=$('#app'), ar=app.getBoundingClientRect(), cs=getComputedStyle(app), hud=$('#hud');
-  const availW=ar.width-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
-  const availH=ar.height-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom)-hud.offsetHeight-parseFloat(cs.rowGap||8);
-  if(mode!=='play'&&mode!=='pause'){ L=(availW/Math.max(1,availH))>=1.1?LAYOUTS.land:LAYOUTS.port; }
+  const app=$('#app'), hud=$('#hud'), vw=window.innerWidth, vh=window.innerHeight;
+  // the sideways view only makes sense while the screen itself is tall
+  if(ROT&&vw>vh) ROT=false;
+  document.body.classList.toggle('rot',ROT);
+  if(ROT){app.style.left=vw+'px';app.style.width=vh+'px';app.style.height=vw+'px';} else {app.style.left='';app.style.width='';app.style.height='';}
+  $('#bRot').hidden=!(TOUCH&&(vh>vw||ROT)); $('#bRot').setAttribute('aria-pressed',String(ROT));
+  const cs=getComputedStyle(app);
+  { const aw=app.clientWidth, ah=app.clientHeight; document.body.classList.toggle('wide',aw/Math.max(1,ah)>=1.1); document.body.classList.toggle('short',ah<=640); document.body.classList.toggle('vshort',ah<=540); document.body.classList.toggle('xshort',ah<=440); }
+  const availW=app.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  const availH=app.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom)-hud.offsetHeight-parseFloat(cs.rowGap||8);
+  const want=(availW/Math.max(1,availH))>=1.1?LAYOUTS.land:LAYOUTS.port;
+  if(want!==L){ const old=L; L=want; if(G) relayout(old); }
   const strip=L===LAYOUTS.port?50:0;
   scale=Math.max(.05,Math.min(availW/L.W,(availH-strip)/L.H));
   dpr=Math.min(2,window.devicePixelRatio||1);
@@ -1750,7 +1818,7 @@ window.addEventListener('resize',fit);
 if(window.ResizeObserver) new ResizeObserver(fit).observe($('#app'));
 
 /* ---------- input ---------- */
-function toLogical(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)/scale,y:(e.clientY-r.top)/scale};}
+function toLogical(e){const r=canvas.getBoundingClientRect();return ROT?{x:(e.clientY-r.top)/scale,y:(r.right-e.clientX)/scale}:{x:(e.clientX-r.left)/scale,y:(e.clientY-r.top)/scale};}
 canvas.addEventListener('pointerdown',e=>{
   ensureAudio(); if(mode!=='play') return;
   try{canvas.setPointerCapture(e.pointerId);}catch(_){}
@@ -1998,6 +2066,7 @@ $('#bResume').addEventListener('click',resumeGame);
 $('#bQuit').addEventListener('click',toTitle);
 $('#bAd').addEventListener('click',playAd);
 function syncSound(){$('#bSound').textContent=save.muted?'♪̸':'♪';$('#bSound').setAttribute('aria-pressed',String(!save.muted));}
+$('#bRot').addEventListener('click',()=>{ROT=!ROT;fitKey='';fit();});
 $('#bSound').addEventListener('click',()=>{save.muted=!save.muted;persist();syncSound();ensureAudio();Music.sync();});
 document.addEventListener('pointerdown',()=>ensureAudio(),{once:true});
 
@@ -2027,4 +2096,3 @@ requestAnimationFrame(frame);
 </script>
 
 <script>document.getElementById('bStart')?.addEventListener('click',()=>window.dfTrack?.('game_start',{game:'night_owl_mart'}))</script>
-</body></html>
