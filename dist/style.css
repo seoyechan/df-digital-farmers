@@ -1,19 +1,14 @@
-/* Tokens: one accent (sprout green) used only for actions and the signature sprout. */
+/* Tokens: dark by default; one accent (sprout green) used only for actions and the signature sprout. */
 :root{
-  color-scheme:light dark;
-  --bg:#fbfbf9; --tile:#f1f1ec; --ink:#1d1d1f; --muted:#5e5e63; --line:#e3e3dd;
-  --accent:#1e7b3c; --on-accent:#fff; --accent-soft:#d9f2df;
-  --leaf-1:#7bd389; --leaf-2:#2e8b4a; --soil:#cdb89a; --soil-line:#e2d6c3; --bloom:#ffb547; --bloom-core:#ff7a1a;
-  --glass:rgb(251 251 249 / .72);
+  color-scheme:dark;
+  --bg:#000; --tile:#1c1c1e; --ink:#f5f5f7; --muted:#a1a1a6; --line:#2c2c2e;
+  --accent:#5fd27f; --on-accent:#0b2a14; --accent-soft:#1d4a2a;
+  --leaf-1:#6fd283; --leaf-2:#3fae5e; --soil:#5b4a36; --soil-line:#3a3026; --bloom:#ffb547; --bloom-core:#ff7a1a;
+  --glass:rgb(0 0 0 / .66);
   --font:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
   --ease:cubic-bezier(.22,1,.36,1); --spring:cubic-bezier(.34,1.56,.64,1);
   --r-lg:32px; --r-md:22px;
 }
-@media(prefers-color-scheme:dark){:root{
-  --bg:#000; --tile:#1c1c1e; --ink:#f5f5f7; --muted:#a1a1a6; --line:#2c2c2e;
-  --accent:#5fd27f; --on-accent:#0b2a14; --accent-soft:#1d4a2a;
-  --leaf-1:#6fd283; --leaf-2:#3fae5e; --soil:#5b4a36; --soil-line:#3a3026; --glass:rgb(0 0 0 / .66);
-}}
 @media(prefers-contrast:more){:root{--muted:var(--ink);--line:var(--ink)}}
 
 *{box-sizing:border-box}
@@ -127,9 +122,8 @@ h1,h2,h3,p,figure,ol,ul{margin:0}
 .tiles{display:grid;gap:24px}
 .tile{--p:0;position:relative;display:grid;grid-template-columns:1fr 1.1fr;align-items:center;gap:24px;min-height:560px;padding:56px;border-radius:var(--r-lg);background:var(--tile);overflow:hidden;isolation:isolate;
   transform:scale(calc(.94 + min(var(--p) * 2, 1) * .06))}
-.tile::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(500px circle at var(--mx,50%) var(--my,50%),rgb(255 255 255 / .55),transparent 60%);opacity:0;transition:opacity .4s}
+.tile::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(500px circle at var(--mx,50%) var(--my,50%),rgb(255 255 255 / .07),transparent 60%);opacity:0;transition:opacity .4s}
 .tile:hover::before{opacity:1}
-@media(prefers-color-scheme:dark){.tile::before{background:radial-gradient(500px circle at var(--mx,50%) var(--my,50%),rgb(255 255 255 / .07),transparent 60%)}}
 .tile-kicker{font-size:15px;font-weight:600;color:var(--muted)}
 .tile h3{font-size:clamp(44px,5.4vw,76px);line-height:1.05;font-weight:800;letter-spacing:-.045em;margin-top:8px}
 .ondo-name span{color:var(--bloom-core)}
