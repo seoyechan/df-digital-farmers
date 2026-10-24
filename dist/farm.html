@@ -66,7 +66,7 @@ dialog::backdrop{background:#233d3225;backdrop-filter:blur(3px)}
 .crop-target{position:fixed;width:74px;height:84px;transform:translate(-50%,-65%);border-radius:50%;border:2px solid transparent;touch-action:manipulation}.crop-target:hover{border-color:#fff9d9;background:#ffffff14}.crop-target:focus-visible{outline:3px solid #387455;background:#fff9d944}.crop-target[hidden]{display:none}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
-</head>
+<script src="/ga.js"></script></head>
 <body>
 <canvas id="scene" tabindex="0" aria-label="디지털 파머 농장. 캐릭터를 움직여 당근을 뽑으면 서비스 소개가 나옵니다."></canvas>
 <div id="loading" class="fallback" role="status"><div class="bubble"><h2>작은 농장을 준비하고 있어요.</h2><p>잠시만 기다려 주세요.</p><a href="./#services">서비스 목록으로 보기 →</a></div></div>
@@ -525,6 +525,7 @@ intro.addEventListener('cancel', e => e.preventDefault());
 $('#start').onclick = () => { ensureAudio(); intro.close(); state = 'play'; canvas.focus(); $('.journal').classList.add('hidden'); };
 
 function showCard(s) {
+  window.dfTrack?.('farm_harvest', {item: s.sign});
   const pts = s.points.map(p => `<li>${p}</li>`).join('');
   $('#card-body').innerHTML = `<span class="tag">🥕 ${s.obj} 수확했다!</span>
     ${s.img ? `<div class="art" style="background-image:url('${s.img}')${s.cover ? ';background-size:cover' : ''}" role="img" aria-label="${s.alt || s.name + ' 캐릭터'}"></div>` : '<div class="art seed" aria-hidden="true">🌱</div>'}

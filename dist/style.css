@@ -260,6 +260,8 @@ dialog::backdrop{background:rgb(0 0 0 / .4);backdrop-filter:blur(6px)}
 .policy-section a:not(.link-arrow){text-decoration:underline;text-underline-offset:3px}
 .policy-entry{padding:28px;border-radius:var(--r-md);background:var(--tile);margin-top:16px}
 .policy-entry h3{margin-top:0}
+.policy-entry h4{font-size:17px;font-weight:700;margin:22px 0 6px}
+.policy-entry ul{margin:0 0 4px}
 .policy-status{display:inline-block;font-size:14px;font-weight:600;color:var(--accent);margin-bottom:6px}
 
 /* Reveal on enter */
